@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude Anatomy — Interactive Explorer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --bg2: #161b22;
+      --bg3: #21262d;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text2: #8b949e;
+      --accent: #d97706;
+      --accent2: #f59e0b;
+      --blue: #58a6ff;
+      --green: #3fb950;
+      --purple: #bc8cff;
+      --red: #f85149;
+      --cyan: #39d353;
+      --tag-bg: #1f2937;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, #d97706, #f59e0b);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .header-sub {
+      color: var(--text2);
+      font-size: 14px;
+      flex: 1;
+    }
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .btn:hover { background: var(--border); }
+    .btn-accent {
+      background: linear-gradient(135deg, #92400e, #d97706);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .btn-accent:hover { background: linear-gradient(135deg, #b45309, #f59e0b); }
+
+    /* ── Subheader ── */
+    .subheader {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+      font-size: 13px;
+      color: var(--text2);
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .subheader strong { color: var(--text); }
+
+    /* ── Main layout ── */
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── Tree ── */
+    .tree-panel {
+      width: 280px;
+      min-width: 220px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      flex-shrink: 0;
+      padding: 12px 8px;
+    }
+    .tree-panel::-webkit-scrollbar { width: 4px; }
+    .tree-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .tree ul { list-style: none; padding-left: 16px; }
+    .tree > ul { padding-left: 4px; }
+
+    .tree-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text2);
+      transition: all 0.12s;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .tree-item:hover { background: var(--bg3); color: var(--text); }
+    .tree-item.active { background: rgba(217,119,6,0.15); color: var(--accent2); }
+    .tree-item .icon { flex-shrink: 0; font-size: 14px; }
+    .tree-item .label { font-size: 13px; }
+
+    .folder-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.12s;
+    }
+    .folder-header:hover { background: var(--bg3); }
+    .folder-header .chevron { font-size: 10px; transition: transform 0.15s; }
+    .folder-header.collapsed .chevron { transform: rotate(-90deg); }
+
+    .folder-children { overflow: hidden; }
+    .folder-children.collapsed { display: none; }
+
+    .tree-badge {
+      margin-left: auto;
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .badge-always { background: rgba(63,185,80,0.2); color: var(--green); }
+    .badge-cmd { background: rgba(88,166,255,0.2); color: var(--blue); }
+    .badge-hook { background: rgba(249,115,22,0.2); color: #fb923c; }
+    .badge-mcp { background: rgba(188,140,255,0.2); color: var(--purple); }
+
+    /* ── Detail panel ── */
+    .detail-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .detail-header {
+      padding: 16px 24px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .detail-title {
+      font-size: 18px;
+      font-weight: 700;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+    .detail-tags { display: flex; gap: 8px; }
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .tag-always { background: rgba(63,185,80,0.15); color: var(--green); border: 1px solid rgba(63,185,80,0.3); }
+    .tag-auto   { background: rgba(217,119,6,0.15); color: var(--accent2); border: 1px solid rgba(217,119,6,0.3); }
+    .tag-cmd    { background: rgba(88,166,255,0.15); color: var(--blue); border: 1px solid rgba(88,166,255,0.3); }
+    .tag-hook   { background: rgba(249,115,22,0.15); color: #fb923c; border: 1px solid rgba(249,115,22,0.3); }
+    .tag-mcp    { background: rgba(188,140,255,0.15); color: var(--purple); border: 1px solid rgba(188,140,255,0.3); }
+    .tag-spec   { background: rgba(57,211,83,0.15); color: var(--cyan); border: 1px solid rgba(57,211,83,0.3); }
+
+    /* Tab switcher */
+    .tab-bar {
+      display: flex;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .tab-btn {
+      padding: 10px 20px;
+      font-size: 13px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text2);
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent2); border-bottom-color: var(--accent2); }
+
+    /* Detail content */
+    .detail-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+    .detail-body::-webkit-scrollbar { width: 6px; }
+    .detail-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* Explain tab */
+    .explain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    @media (max-width: 900px) { .explain-grid { grid-template-columns: 1fr; } }
+
+    .explain-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .explain-card h4 {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .explain-card p {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    .example-block {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .example-block-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text2);
+    }
+    .example-block pre {
+      padding: 16px;
+      font-family: 'SF Mono', 'Fira Code', 'Fira Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text);
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* Live preview tab */
+    .live-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 900px) { .live-grid { grid-template-columns: 1fr; } }
+
+    .live-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .live-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .live-card-body {
+      padding: 16px;
+    }
+    .live-card pre {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text);
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    .insight-item {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .insight-item h5 {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .insight-item p {
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+
+    /* Detail footer */
+    .detail-footer {
+      padding: 12px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+      background: var(--bg2);
+    }
+
+    /* Welcome screen */
+    .welcome {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+      color: var(--text2);
+    }
+    .welcome h2 { font-size: 22px; color: var(--text); margin-bottom: 12px; }
+    .welcome p { font-size: 14px; line-height: 1.6; max-width: 480px; }
+
+    /* Copy feedback */
+    .copy-feedback {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--green);
+      color: #000;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    .copy-feedback.show { opacity: 1; }
+
+    /* Kiro comparison badge */
+    .kiro-compare {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text2);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .kiro-compare code {
+      background: var(--bg3);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      color: var(--text2);
+    }
+
+    /* ── Wizard modal ── */
+    .wizard-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .wizard-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .wizard-modal {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 1020px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(12px);
+      transition: transform 0.2s;
+    }
+    .wizard-overlay.open .wizard-modal { transform: translateY(0); }
+
+    .wizard-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .wizard-header h2 { font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .wizard-header p  { font-size: 12px; color: var(--text2); margin-top: 3px; }
+    .wizard-close {
+      background: none; border: none; color: var(--text2);
+      font-size: 20px; cursor: pointer; padding: 4px 8px;
+      border-radius: 6px; transition: background 0.1s;
+    }
+    .wizard-close:hover { background: var(--bg3); color: var(--text); }
+
+    .wizard-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Form side */
+    .wizard-form-panel {
+      padding: 20px 24px;
+      overflow-y: auto;
+      border-right: 1px solid var(--border);
+    }
+    .wizard-form-panel::-webkit-scrollbar { width: 4px; }
+    .wizard-form-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .wizard-section {
+      margin-bottom: 22px;
+    }
+    .wizard-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent2);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .field { margin-bottom: 12px; }
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 5px;
+    }
+    .field input, .field select, .field textarea {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+      padding: 8px 12px;
+      transition: border-color 0.15s;
+      outline: none;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: var(--accent);
+    }
+    .field select option { background: var(--bg3); }
+    .field textarea { resize: vertical; min-height: 60px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .field-hint { font-size: 11px; color: var(--text2); margin-top: 4px; }
+
+    .constraint-row {
+      display: flex; gap: 8px; margin-bottom: 8px;
+    }
+    .constraint-row input { flex: 1; }
+    .constraint-add {
+      background: none; border: 1px dashed var(--border);
+      color: var(--text2); font-size: 12px; cursor: pointer;
+      padding: 6px 12px; border-radius: 7px; width: 100%;
+      transition: all 0.15s;
+    }
+    .constraint-add:hover { border-color: var(--accent); color: var(--accent2); }
+    .remove-btn {
+      background: none; border: none; color: var(--text2);
+      font-size: 16px; cursor: pointer; padding: 0 4px;
+      border-radius: 4px; flex-shrink: 0; line-height: 1;
+    }
+    .remove-btn:hover { color: var(--red); }
+
+    /* Preview side */
+    .wizard-preview-panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .wizard-preview-header {
+      padding: 10px 16px;
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .wizard-preview-header span { display: flex; align-items: center; gap: 6px; }
+    .live-pill {
+      background: rgba(63,185,80,0.2); color: var(--green);
+      font-size: 10px; font-weight: 700; padding: 2px 7px;
+      border-radius: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .wizard-preview-code {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+    .wizard-preview-code::-webkit-scrollbar { width: 4px; }
+    .wizard-preview-code::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* Syntax highlight classes */
+    .sh-h1  { color: #79c0ff; font-weight: 700; }
+    .sh-h2  { color: #58a6ff; font-weight: 600; }
+    .sh-h3  { color: #79c0ff; }
+    .sh-code{ color: #d2a8ff; }
+    .sh-li  { color: var(--text); }
+    .sh-fm  { color: #8b949e; }
+    .sh-val { color: #a5d6ff; }
+    .sh-key { color: #ffa657; }
+
+    .wizard-footer {
+      padding: 14px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      background: var(--bg2);
+    }
+    .wizard-footer-left { font-size: 12px; color: var(--text2); }
+    .wizard-footer-right { display: flex; gap: 10px; }
+    .btn-green {
+      background: linear-gradient(135deg, #166534, #16a34a);
+      border-color: #16a34a; color: #fff;
+    }
+    .btn-green:hover { background: linear-gradient(135deg, #15803d, #22c55e); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    Claude Anatomy
+  </div>
+  <div class="header-sub">Click any file to learn what it does, when to use it, and see real templates.</div>
+  <div class="header-actions">
+    <button class="btn btn-accent" onclick="openWizard()">✨ Generate CLAUDE.md</button>
+    <button class="btn" onclick="downloadSkeleton()">⬇️ Download Skeleton</button>
+    <a class="btn" href="https://docs.anthropic.com/en/docs/claude-code/overview" target="_blank">📖 Claude Docs</a>
+  </div>
+</header>
+
+<div class="subheader">
+  The <strong>Claude Code</strong> project anatomy — every file explained, with copy-ready templates.
+  Works for vibe coding, agents, and skill building.
+</div>
+
+<div class="main">
+  <!-- Tree -->
+  <nav class="tree-panel">
+    <ul class="tree" id="tree"></ul>
+  </nav>
+
+  <!-- Detail -->
+  <div class="detail-panel" id="detail-panel">
+    <div class="welcome" id="welcome">
+      <div style="font-size:48px;margin-bottom:16px;">⚡</div>
+      <h2>Claude Code Project Anatomy</h2>
+      <p>Select a file from the tree to learn what it does, when to use it, and get a copy-ready template.<br><br>
+      This mirrors the <strong>.kiro/</strong> skeleton from AWS Kiro — but for <strong>Claude Code</strong>.</p>
+    </div>
+    <div id="file-view" style="display:none; flex-direction:column; height:100%;">
+      <div class="detail-header">
+        <span class="detail-title" id="dv-title"></span>
+        <div class="detail-tags" id="dv-tags"></div>
+      </div>
+      <div class="tab-bar">
+        <button class="tab-btn active" id="tab-explain" onclick="showTab('explain')">📖 Explain</button>
+        <button class="tab-btn" id="tab-preview" onclick="showTab('preview')">👁️ Live Preview</button>
+      </div>
+      <div class="detail-body" id="dv-body"></div>
+      <div class="detail-footer">
+        <button class="btn btn-accent" onclick="copyTemplate()">📋 Copy Template</button>
+        <a class="btn" id="dv-docs-link" href="#" target="_blank">📖 Official Docs →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="copy-feedback" id="copy-feedback">✓ Copied to clipboard!</div>
+
+<!-- ── Wizard Modal ── -->
+<div class="wizard-overlay" id="wizard-overlay" onclick="overlayClick(event)">
+  <div class="wizard-modal">
+    <div class="wizard-header">
+      <div>
+        <h2>✨ CLAUDE.md Generator</h2>
+        <p>Fill in your project details — get a production-ready CLAUDE.md in seconds.</p>
+      </div>
+      <button class="wizard-close" onclick="closeWizard()">✕</button>
+    </div>
+
+    <div class="wizard-body">
+      <!-- Left: form -->
+      <div class="wizard-form-panel" id="wizard-form">
+
+        <div class="wizard-section">
+          <div class="wizard-section-title">🏗️ Project Basics</div>
+          <div class="field">
+            <label>Project name</label>
+            <input id="w-name" type="text" placeholder="e.g. TaskFlow" oninput="updatePreview()" />
+          </div>
+          <div class="field">
+            <label>One-line description</label>
+            <input id="w-desc" type="text" placeholder="e.g. Real-time team task management for small engineering teams" oninput="updatePreview()" />
+          </div>
+          <div class="field">
+            <label>Who is it for?</label>
+            <input id="w-users" type="text" placeholder="e.g. Engineering teams of 5-30 people" oninput="updatePreview()" />
+          </div>
+        </div>
+
+        <div class="wizard-section">
+          <div class="wizard-section-title">⚙️ Tech Stack</div>
+          <div class="field-row">
+            <div class="field">
+              <label>Language</label>
+              <select id="w-lang" onchange="updatePreview()">
+                <option value="TypeScript">TypeScript</option>
+                <option value="JavaScript">JavaScript</option>
+                <option value="Python">Python</option>
+                <option value="Go">Go</option>
+                <option value="Rust">Rust</option>
+                <option value="Ruby">Ruby</option>
+                <option value="Java">Java</option>
+                <option value="C#">C#</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Package manager</label>
+              <select id="w-pm" onchange="updatePMDefaults(); updatePreview()">
+                <option value="bun">bun</option>
+                <option value="npm">npm</option>
+                <option value="pnpm">pnpm</option>
+                <option value="yarn">yarn</option>
+                <option value="pip">pip</option>
+                <option value="go">go</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Framework</label>
+              <input id="w-framework" type="text" placeholder="e.g. Next.js 15, FastAPI, gin" oninput="updatePreview()" />
+            </div>
+            <div class="field">
+              <label>Database</label>
+              <input id="w-db" type="text" placeholder="e.g. PostgreSQL, MongoDB, SQLite" oninput="updatePreview()" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Other key libraries <span style="font-weight:400;color:var(--text2)">(comma-separated, optional)</span></label>
+            <input id="w-libs" type="text" placeholder="e.g. Prisma, Zod, Tailwind, React Query" oninput="updatePreview()" />
+          </div>
+        </div>
+
+        <div class="wizard-section">
+          <div class="wizard-section-title">▶️ Commands</div>
+          <div class="field-row">
+            <div class="field">
+              <label>Dev server</label>
+              <input id="w-cmd-dev" type="text" placeholder="bun run dev" oninput="updatePreview()" />
+            </div>
+            <div class="field">
+              <label>Run tests</label>
+              <input id="w-cmd-test" type="text" placeholder="bun test" oninput="updatePreview()" />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Build</label>
+              <input id="w-cmd-build" type="text" placeholder="bun run build" oninput="updatePreview()" />
+            </div>
+            <div class="field">
+              <label>Lint / format <span style="font-weight:400;color:var(--text2)">(optional)</span></label>
+              <input id="w-cmd-lint" type="text" placeholder="bun run lint" oninput="updatePreview()" />
+            </div>
+          </div>
+        </div>
+
+        <div class="wizard-section">
+          <div class="wizard-section-title">📐 Architecture</div>
+          <div class="field">
+            <label>Key folders / structure <span style="font-weight:400;color:var(--text2)">(optional)</span></label>
+            <textarea id="w-arch" placeholder="src/ — main source&#10;tests/ — test suite&#10;docs/ — documentation" oninput="updatePreview()" rows="3"></textarea>
+          </div>
+          <div class="field">
+            <label>Main pattern</label>
+            <select id="w-pattern" onchange="updatePreview()">
+              <option value="REST API + frontend">REST API + frontend</option>
+              <option value="Full-stack monolith">Full-stack monolith</option>
+              <option value="Microservices">Microservices</option>
+              <option value="CLI tool">CLI tool</option>
+              <option value="Library / SDK">Library / SDK</option>
+              <option value="Event-driven">Event-driven</option>
+              <option value="Monorepo">Monorepo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="wizard-section">
+          <div class="wizard-section-title">🚫 Hard Constraints</div>
+          <p class="field-hint" style="margin-bottom:10px">Things Claude must never do — wrong moves, critical files, dangerous commands.</p>
+          <div id="constraints-list">
+            <div class="constraint-row">
+              <input type="text" placeholder="e.g. Never hardcode secrets — use .env.local" oninput="updatePreview()" />
+              <button class="remove-btn" onclick="removeConstraint(this)" title="Remove">×</button>
+            </div>
+            <div class="constraint-row">
+              <input type="text" placeholder="e.g. Always run tests before suggesting a commit" oninput="updatePreview()" />
+              <button class="remove-btn" onclick="removeConstraint(this)" title="Remove">×</button>
+            </div>
+          </div>
+          <button class="constraint-add" onclick="addConstraint()">+ Add constraint</button>
+        </div>
+
+        <div class="wizard-section">
+          <div class="wizard-section-title">🎯 Current Focus</div>
+          <div class="field">
+            <label>What are you actively building? <span style="font-weight:400;color:var(--text2)">(optional)</span></label>
+            <input id="w-focus" type="text" placeholder="e.g. User authentication flow" oninput="updatePreview()" />
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right: live preview -->
+      <div class="wizard-preview-panel">
+        <div class="wizard-preview-header">
+          <span>📄 CLAUDE.md <span class="live-pill">live</span></span>
+          <button class="btn" style="padding:4px 10px;font-size:11px" onclick="copyWizardOutput()">Copy</button>
+        </div>
+        <div class="wizard-preview-code" id="wizard-preview"></div>
+      </div>
+    </div>
+
+    <div class="wizard-footer">
+      <div class="wizard-footer-left">✨ Paste this file as <code style="background:var(--bg3);padding:2px 6px;border-radius:4px">CLAUDE.md</code> at your project root.</div>
+      <div class="wizard-footer-right">
+        <button class="btn" onclick="closeWizard()">Cancel</button>
+        <button class="btn btn-green" onclick="copyWizardOutput()">📋 Copy CLAUDE.md</button>
+        <button class="btn btn-accent" onclick="downloadWizardOutput()">⬇️ Download</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── File data ──────────────────────────────────────────────────────────────
+const FILES = {
+  'claude-md': {
+    name: 'CLAUDE.md',
+    path: 'CLAUDE.md',
+    tags: [{ label: 'Always Loaded', cls: 'tag-always' }, { label: 'Project Root', cls: 'tag-spec' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory',
+    kiroEquiv: '.kiro/steering/*.md (inclusion: always)',
+    what: 'The single most important file. Claude reads it automatically at the start of every session — no prompt needed. Think of it as the steering wheel for your whole project.',
+    when: 'Every project should have one. Create it before your first Claude session. Update it whenever your stack, conventions, or key constraints change.',
+    why: 'Without CLAUDE.md, Claude knows nothing about your project context. With it, every response is tailored — correct tech stack, right conventions, aware of constraints.',
+    insights: [
+      { icon: '🧠', title: 'Always in Context', text: 'Claude loads CLAUDE.md before every conversation. It\'s never "forgotten" mid-session. Keep it concise — every line costs tokens.' },
+      { icon: '🎯', title: 'What to Put In It', text: 'Project overview, tech stack, common commands, code conventions, key constraints (things Claude MUST NOT do), and current focus.' },
+      { icon: '⚡', title: 'Hierarchical', text: 'You can have a global ~/.claude/CLAUDE.md for personal defaults, and a per-project CLAUDE.md that adds project-specific context. Both are loaded.' },
+      { icon: '🔄', title: 'Keep It Fresh', text: 'Treat CLAUDE.md like living documentation. If Claude makes the same mistake twice, the fix belongs in CLAUDE.md, not in a repeated prompt.' }
+    ],
+    template: `# [Project Name]
+
+## Project Overview
+A [brief description] for [target users].
+[One sentence on the core value prop].
+
+## Tech Stack
+- **Language**: TypeScript / Python / Go
+- **Framework**: Next.js / FastAPI / ...
+- **Database**: PostgreSQL / MongoDB / ...
+- **Package Manager**: npm / pnpm / bun
+
+## Architecture
+- \`src/\` — Main source code
+- \`tests/\` — Test suite
+- \`docs/\` — Documentation
+
+## Common Commands
+\`\`\`bash
+npm run dev    # Start dev server
+npm test       # Run tests
+npm run build  # Production build
+npm run lint   # Lint + format
+\`\`\`
+
+## Code Conventions
+- [Naming conventions]
+- [Testing requirements]
+- [Error handling patterns]
+
+## Key Constraints
+- Do NOT modify \`[file]\` without updating \`[related]\`
+- Never hardcode secrets — use .env.local
+- Always run \`npm test\` before committing
+
+## Current Focus
+- [ ] [What you're actively building]`
+  },
+
+  'settings-json': {
+    name: 'settings.json',
+    path: '.claude/settings.json',
+    tags: [{ label: 'Hooks', cls: 'tag-hook' }, { label: 'Permissions', cls: 'tag-always' }, { label: 'MCP', cls: 'tag-mcp' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/settings',
+    kiroEquiv: '.kiro/hooks/*.json + .kiro/settings/mcp.json',
+    what: 'The control center for Claude Code. Sets permissions (what bash commands are allowed/denied), hooks (scripts that run before/after tool calls), and MCP server connections.',
+    when: 'Add it once you want to automate things (auto-lint on save, auto-test after edits) or restrict dangerous commands (rm -rf, force push). Required if you use MCP servers.',
+    why: 'Hooks turn Claude into a proactive coding partner — it can lint your code the moment it edits a file, log commands, or block risky operations entirely.',
+    insights: [
+      { icon: '🔒', title: 'Permissions', text: 'The allow/deny lists control which bash commands Claude can run without asking you first. Use patterns like "Bash(npm run *)" to allow entire command families.' },
+      { icon: '⚡', title: 'PostToolUse Hooks', text: 'These fire after Claude uses a tool (Edit, Write, Bash, etc.). Perfect for auto-linting after edits, running tests after changes, or logging activity.' },
+      { icon: '🛡️', title: 'PreToolUse Hooks', text: 'Fire before a tool runs. Use to validate, log, or block operations. Return a non-zero exit code to cancel the tool call.' },
+      { icon: '🔌', title: 'MCP Servers', text: 'Connect Claude to external tools — databases, GitHub, Slack, custom APIs. Each server in mcpServers becomes a new set of tools Claude can use.' }
+    ],
+    template: `{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add *)",
+      "Bash(git commit*)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push --force*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npm run lint --fix 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[claude] $CLAUDE_TOOL_INPUT_COMMAND' >> .claude/bash.log 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
+      "env": {}
+    }
+  }
+}`
+  },
+
+  'cmd-commit': {
+    name: 'commit.md',
+    path: '.claude/commands/commit.md',
+    tags: [{ label: '/commit', cls: 'tag-cmd' }, { label: 'Slash Command', cls: 'tag-cmd' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands',
+    kiroEquiv: '.kiro/skills/[skill-name]/SKILL.md',
+    what: 'A custom slash command. Type /commit in Claude Code and it runs this prompt automatically. Each .md file in .claude/commands/ becomes a /[filename] command.',
+    when: 'Create commands for any task you repeat often: committing, reviewing, debugging, writing tests. Commands keep you consistent and save re-typing.',
+    why: 'Slash commands are reusable, version-controlled prompts. They encode your team\'s best practices directly into Claude\'s workflow.',
+    insights: [
+      { icon: '⌨️', title: 'Trigger It', text: 'Type /commit in the Claude Code prompt. Claude executes the instructions in this file immediately — no need to repeat yourself.' },
+      { icon: '📝', title: 'Frontmatter', text: 'The "description:" field is shown in the /commands list. Keep it short and action-oriented so you can find it quickly.' },
+      { icon: '🔑', title: '$ARGUMENTS', text: 'Use $ARGUMENTS in your command to pass text after the command name. /review src/auth.ts passes "src/auth.ts" as $ARGUMENTS.' },
+      { icon: '🤝', title: 'Team Shared', text: 'Commands in .claude/commands/ are checked into git and shared with your whole team. Everyone gets the same /commit behavior.' }
+    ],
+    template: `---
+description: Create a conventional commit after reviewing all staged changes
+---
+
+Review all changes and create a well-formatted git commit.
+
+1. Run \`git status\` and \`git diff --staged\`
+2. Pick type: \`feat\` / \`fix\` / \`docs\` / \`refactor\` / \`test\` / \`chore\`
+3. Write a concise subject line (≤72 chars, imperative mood)
+4. Add a body if the change is non-obvious
+5. Stage the right files (specific files, not git add -A)
+6. Commit — do NOT push unless explicitly asked`
+  },
+
+  'cmd-review': {
+    name: 'review.md',
+    path: '.claude/commands/review.md',
+    tags: [{ label: '/review', cls: 'tag-cmd' }, { label: 'Slash Command', cls: 'tag-cmd' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands',
+    kiroEquiv: '.kiro/skills/[skill-name]/SKILL.md',
+    what: 'A /review slash command that instructs Claude to review code for bugs, security issues, and quality problems. Pass a file path as argument: /review src/auth.ts',
+    when: 'Before merging a PR, after writing new code, when you want a second set of eyes on a critical path.',
+    why: 'Encodes exactly what your team cares about in a code review — consistent, repeatable, no "looks good to me" rubber-stamps.',
+    insights: [
+      { icon: '🎯', title: 'Focused Reviews', text: 'By listing exactly what to check (bugs, security, performance, style), you prevent Claude from spending tokens on irrelevant praise.' },
+      { icon: '🔐', title: 'Security First', text: 'Always include OWASP Top 10 in reviews. Claude will surface injection risks, missing auth checks, and exposed secrets.' },
+      { icon: '📁', title: 'Pass a Path', text: '/review src/auth.ts — the path becomes $ARGUMENTS. Claude reads the file and applies these review instructions.' },
+      { icon: '🚦', title: 'Output Format', text: 'The "file:line → issue → fix" format makes review output actionable and easy to work through systematically.' }
+    ],
+    template: `---
+description: Review code for bugs, security issues, and quality problems
+---
+
+Review the code in $ARGUMENTS (or recent changes if no argument given).
+
+Check for:
+1. **Bugs** — Logic errors, null/undefined, race conditions
+2. **Security** — Injection, XSS, auth bypass, secrets in code (OWASP Top 10)
+3. **Performance** — N+1 queries, blocking calls, memory leaks
+4. **Correctness** — Does it match intent? Edge cases handled?
+5. **Style** — Consistent with conventions in CLAUDE.md?
+6. **Tests** — Are new code paths covered?
+
+Format: \`file:line → issue → suggested fix\`
+Be direct. Skip praise. Flag only real problems.`
+  },
+
+  'cmd-debug': {
+    name: 'debug.md',
+    path: '.claude/commands/debug.md',
+    tags: [{ label: '/debug', cls: 'tag-cmd' }, { label: 'Slash Command', cls: 'tag-cmd' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands',
+    kiroEquiv: '.kiro/skills/[skill-name]/SKILL.md',
+    what: 'A /debug slash command that guides Claude through systematic bug diagnosis — reproduce, locate, hypothesize, verify, fix, confirm, clean up.',
+    when: 'When you have an error you can\'t quickly figure out. Describe the bug as $ARGUMENTS: /debug "TypeError: Cannot read properties of undefined at auth.ts:42"',
+    why: 'Prevents Claude from guessing. Forces systematic diagnosis before applying fixes — no cargo-cult debugging.',
+    insights: [
+      { icon: '🔍', title: 'No Guessing', text: 'The command explicitly says "Do not guess. Do not apply fixes without understanding the cause." This prevents the common trap of random fixes.' },
+      { icon: '🧪', title: 'Hypothesis-Driven', text: 'Forming 2-3 ranked hypotheses before verifying forces Claude to think about the problem space rather than jumping to the first thing it sees.' },
+      { icon: '🧹', title: 'Clean Up Phase', text: 'Step 7 removes debug logs after fixing. Without this step, debug code often gets committed accidentally.' },
+      { icon: '📋', title: 'Pass the Error', text: '/debug "error message here" — paste the full error as $ARGUMENTS for best results.' }
+    ],
+    template: `---
+description: Systematically diagnose and fix a bug
+---
+
+Debug the issue: $ARGUMENTS
+
+1. **Reproduce** — Confirm the exact error/behavior
+2. **Locate** — Find the relevant code paths
+3. **Hypothesize** — Form 2-3 root cause candidates, ranked by likelihood
+4. **Verify** — Test each hypothesis; add debug logs if needed
+5. **Fix** — Minimal change that addresses the root cause
+6. **Confirm** — Run relevant test/command to verify the fix
+7. **Clean up** — Remove any debug logs added during investigation
+
+Do not guess. Do not fix without understanding the cause first.`
+  },
+
+  'cmd-test': {
+    name: 'test.md',
+    path: '.claude/commands/test.md',
+    tags: [{ label: '/test', cls: 'tag-cmd' }, { label: 'Slash Command', cls: 'tag-cmd' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands',
+    kiroEquiv: '.kiro/skills/[skill-name]/SKILL.md',
+    what: 'A /test slash command that instructs Claude to write thorough tests for a given file or feature — matching your project\'s existing test patterns.',
+    when: 'After implementing a feature, before marking a task done, or when coverage is missing on critical paths.',
+    why: 'Standardizes how tests are written across your codebase. Claude will match your existing patterns, coverage rules, and mock conventions.',
+    insights: [
+      { icon: '🪞', title: 'Pattern Matching', text: 'Step 2 tells Claude to check existing tests first. This ensures new tests look and feel like the rest of your test suite.' },
+      { icon: '🚦', title: 'Actually Run Them', text: '"Run npm test to verify tests pass" is critical. Claude should never leave you with untested tests.' },
+      { icon: '🎯', title: 'One Thing Per Test', text: 'The rule "each test should test ONE thing" prevents brittle mega-tests that fail for multiple reasons.' },
+      { icon: '🔌', title: 'Mock External Deps', text: 'Explicit instruction to mock APIs and DBs prevents tests that fail due to network/infra issues.' }
+    ],
+    template: `---
+description: Write tests for a given file or feature
+---
+
+Write tests for: $ARGUMENTS
+
+1. Read the target file to understand what needs testing
+2. Check existing tests to match the project's patterns
+3. Cover: happy path, edge cases, error cases, boundaries
+4. Use the project's test framework (check package.json)
+5. Run \`npm test\` to verify all tests pass
+6. If tests fail, fix the issue — do not delete the test
+
+Rules:
+- Each test tests ONE thing
+- Test names read like documentation
+- Mock all external dependencies (APIs, DBs)
+- Prefer unit tests; integration tests for critical flows`
+  },
+
+  'cmd-spec': {
+    name: 'spec.md',
+    path: '.claude/commands/spec.md',
+    tags: [{ label: '/spec', cls: 'tag-cmd' }, { label: 'Slash Command', cls: 'tag-cmd' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands',
+    kiroEquiv: '.kiro/specs/ (requirements + design + tasks)',
+    what: 'A /spec command that generates a 3-file feature spec before any code is written: requirements.md, design.md, and tasks.md.',
+    when: 'Before starting any non-trivial feature. Forces upfront thinking about what, why, and how — preventing mid-build pivots.',
+    why: 'Kiro has built-in spec management. Claude doesn\'t — but this command gives you the same workflow. Plan first, build second.',
+    insights: [
+      { icon: '📐', title: 'Spec Before Code', text: 'The command ends with "Do not start building until the spec is reviewed." This creates a natural review checkpoint.' },
+      { icon: '📁', title: 'Three Files', text: 'requirements.md (what+why), design.md (how), tasks.md (ordered steps). This mirrors Kiro\'s native spec workflow exactly.' },
+      { icon: '✅', title: 'Task Granularity', text: 'Each task in tasks.md should be small enough to complete in one Claude session with a clear done state.' },
+      { icon: '🗂️', title: 'Stored in specs/', text: 'Specs live in specs/[feature-name]/ and get committed to git. They become permanent documentation of why decisions were made.' }
+    ],
+    template: `---
+description: Create a feature spec before building (requirements, design, tasks)
+---
+
+Create a spec for: $ARGUMENTS
+
+Generate three files in \`specs/[feature-name]/\`:
+
+**requirements.md**
+- User stories: "As a [user], I want [goal] so that [reason]"
+- Acceptance criteria (testable, specific)
+- Explicit non-goals (out of scope)
+
+**design.md**
+- Data model changes
+- API changes (endpoints, contracts)
+- Component/module structure
+- Key decisions and trade-offs
+
+**tasks.md**
+- Ordered checkbox list
+- Each task completable in one Claude session
+- Each task has a clear "done" state
+
+Do not start building until the spec is reviewed and approved.`
+  },
+
+  'specs-requirements': {
+    name: 'requirements.md',
+    path: 'specs/example-feature/requirements.md',
+    tags: [{ label: 'Spec', cls: 'tag-spec' }, { label: 'What & Why', cls: 'tag-spec' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/overview',
+    kiroEquiv: '.kiro/specs/[feature]/requirements.md',
+    what: 'Documents what a feature should do and why — written before any code. Contains user stories, acceptance criteria, and explicit non-goals.',
+    when: 'Before starting any non-trivial feature. Especially useful in agent/vibe-coding sessions where scope creep is common.',
+    why: 'Forces clarity on requirements before Claude starts building. Prevents "I built the wrong thing" situations.',
+    insights: [
+      { icon: '👤', title: 'User Stories', text: '"As a [role], I want [goal] so that [reason]" format ensures every requirement is grounded in a real user need.' },
+      { icon: '✅', title: 'Testable Criteria', text: 'Acceptance criteria must be specific and testable. "Works correctly" is bad. "Returns 404 when user does not exist" is good.' },
+      { icon: '🚫', title: 'Non-Goals Matter', text: 'Explicitly listing what you\'re NOT building is as important as what you are. Prevents scope creep mid-session.' },
+      { icon: '❓', title: 'Open Questions', text: 'Track unresolved decisions here. Don\'t let Claude make business decisions on your behalf.' }
+    ],
+    template: `# Feature: [Feature Name] — Requirements
+
+## User Stories
+- As a [role], I want to [action] so that [outcome].
+- As a [role], I want to [action] so that [outcome].
+
+## Acceptance Criteria
+- [ ] [Specific, testable condition]
+- [ ] [Specific, testable condition]
+- [ ] Error states are handled gracefully
+- [ ] Works on mobile and desktop
+
+## Out of Scope (v1)
+- [Explicitly NOT building this]
+- [Explicitly NOT building this]
+
+## Open Questions
+- [ ] [Decision needed from stakeholder]`
+  },
+
+  'specs-design': {
+    name: 'design.md',
+    path: 'specs/example-feature/design.md',
+    tags: [{ label: 'Spec', cls: 'tag-spec' }, { label: 'How', cls: 'tag-spec' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/overview',
+    kiroEquiv: '.kiro/specs/[feature]/design.md',
+    what: 'The technical design for a feature — data model changes, API contracts, component structure, and key architectural decisions.',
+    when: 'After requirements are approved, before tasks are written. Let Claude help fill this in — it\'s good at generating designs from requirements.',
+    why: 'Makes architectural decisions explicit and reviewable before code is written. Cheaper to change a doc than refactor built code.',
+    insights: [
+      { icon: '🗄️', title: 'Data Model First', text: 'Schema changes cascade through the entire stack. Always define these first so API and UI can be designed around them.' },
+      { icon: '📡', title: 'API Contracts', text: 'Documenting endpoints before building them prevents interface mismatches between frontend and backend.' },
+      { icon: '⚖️', title: 'Document Decisions', text: 'The "Key Decisions" section explains WHY choices were made. Future-you (or teammates) will thank you.' },
+      { icon: '⚠️', title: 'Surface Risks Early', text: 'Listing risks before building means you can address them proactively or adjust scope while it\'s still cheap to do so.' }
+    ],
+    template: `# Feature: [Feature Name] — Design
+
+## Data Model
+\`\`\`sql
+-- New tables or fields
+ALTER TABLE users ADD COLUMN preference jsonb DEFAULT '{}';
+\`\`\`
+
+## API Changes
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | \`/api/feature\` | Create item |
+| GET  | \`/api/feature/:id\` | Get item |
+
+## Component Structure
+\`\`\`
+src/
+  components/
+    FeatureName/
+      index.tsx    ← main component
+      hooks.ts     ← business logic
+      types.ts     ← TypeScript types
+\`\`\`
+
+## Key Decisions
+- **[Decision]**: Chose [A] over [B] because [reason].
+
+## Risks
+- [Risk]: [Mitigation]`
+  },
+
+  'specs-tasks': {
+    name: 'tasks.md',
+    path: 'specs/example-feature/tasks.md',
+    tags: [{ label: 'Spec', cls: 'tag-spec' }, { label: 'Build Plan', cls: 'tag-spec' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/overview',
+    kiroEquiv: '.kiro/specs/[feature]/tasks.md',
+    what: 'A step-by-step ordered build plan. Each checkbox is one Claude session\'s worth of work, with a clear done state.',
+    when: 'After design is approved. Share this with Claude at the start of each coding session: "Work through tasks.md, one task at a time."',
+    why: 'Prevents Claude from trying to build everything at once and losing track. One task = one focused session = one clean commit.',
+    insights: [
+      { icon: '📦', title: 'Session-Sized Tasks', text: 'Each task should be completable in one Claude conversation. If it\'s too big, split it.' },
+      { icon: '✔️', title: 'Clear Done State', text: '"Add API endpoint" is vague. "POST /api/tasks returns 201 with created task and passes tests" is a done state.' },
+      { icon: '🔢', title: 'Order Matters', text: 'Backend before frontend. DB before API. Tests alongside implementation. Order reflects real dependencies.' },
+      { icon: '🤖', title: 'Agent Friendly', text: 'Tasks.md works great with Claude\'s TodoWrite tool. Claude checks off tasks as it goes, giving you real-time progress.' }
+    ],
+    template: `# Feature: [Feature Name] — Tasks
+
+## Phase 1: Backend
+- [ ] Add DB migration for new schema
+- [ ] Create model/service layer
+- [ ] Add API endpoint with validation
+- [ ] Write unit tests for service logic
+
+## Phase 2: Frontend
+- [ ] Create UI component(s)
+- [ ] Wire up API calls
+- [ ] Handle loading and error states
+- [ ] Add form validation
+
+## Phase 3: Polish
+- [ ] Write integration tests
+- [ ] Test edge cases and error states
+- [ ] Update documentation
+- [ ] Code review + merge`
+  },
+
+  'skill-md': {
+    name: 'SKILL.md',
+    path: 'skills/pr-review/SKILL.md',
+    tags: [{ label: 'Skill', cls: 'tag-cmd' }, { label: 'Multi-file', cls: 'tag-hook' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands',
+    kiroEquiv: '.kiro/skills/[name]/SKILL.md',
+    what: 'The instruction file for a complex, multi-file skill. Like a command, but with a folder of supporting scripts and reference docs Claude can use during execution.',
+    when: 'When a task is too complex for a single command file — it needs to run scripts, consult domain knowledge, or follow a multi-step workflow with real tooling.',
+    why: 'Commands are prompts. Skills are workflows. A skill bundles the instructions + the tools (scripts) + the knowledge (references) needed to do a job properly.',
+    insights: [
+      { icon: '📦', title: 'Self-Contained Bundle', text: 'Everything Claude needs lives in one folder: SKILL.md (what to do), scripts/ (how to automate it), references/ (what standards to apply). Move the folder = move the skill.' },
+      { icon: '🔧', title: 'Scripts Claude Can Run', text: 'Claude executes scripts/quality-check.sh during the review. The output feeds directly into its analysis — no manual copy-paste needed.' },
+      { icon: '📚', title: 'Reference Docs as Context', text: 'references/review-patterns.md is loaded as domain knowledge. Updating it changes how Claude reviews — no prompt editing required.' },
+      { icon: '🆚', title: 'Skill vs Command', text: 'Use a command (.claude/commands/) for simple tasks (one file, one prompt). Use a skill when you need scripts + reference docs + multi-step logic working together.' }
+    ],
+    template: `---
+description: Comprehensive PR review — checks quality, security, tests, and conventions
+---
+
+# PR Review Skill
+
+Review the PR or changed files for production readiness.
+
+## Steps
+
+1. **Understand the change**
+   - Run \`git diff main...HEAD --stat\`
+   - Identify what problem this solves
+
+2. **Run automated checks**
+   - Execute \`skills/pr-review/scripts/quality-check.sh\`
+   - Note any lint, test, or type errors
+
+3. **Review against team patterns**
+   - Load \`skills/pr-review/references/review-patterns.md\`
+   - Work through each checklist category
+
+4. **Write the review**
+   - Format: \`file:line → [🔴 blocker | 🟡 warning | 🟢 suggestion] → issue → fix\`
+   - Skip praise — only actionable feedback
+
+5. **Summary**
+   - ✅ Ready / 🟡 Minor changes / 🔴 Needs rework
+   - Nothing merges with a 🔴`
+  },
+
+  'skill-script': {
+    name: 'quality-check.sh',
+    path: 'skills/pr-review/scripts/quality-check.sh',
+    tags: [{ label: 'Skill Script', cls: 'tag-hook' }, { label: 'Executable', cls: 'tag-hook' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands',
+    kiroEquiv: '.kiro/skills/[name]/scripts/*.sh',
+    what: 'A shell script that Claude runs as part of the skill. Automates mechanical checks (lint, tests, types) so Claude\'s review can focus on logic and judgment.',
+    when: 'Any time your skill needs to run real commands and use the output. Scripts turn Claude from a reader into an executor.',
+    why: 'Without a script, Claude has to ask you to run things and paste results. With a script, it runs it and gets structured output immediately.',
+    insights: [
+      { icon: '🤖', title: 'Claude Runs This', text: 'Claude executes this via Bash during the skill. stdout/stderr becomes input to its analysis — no human in the loop for mechanical checks.' },
+      { icon: '🎯', title: 'Scoped Output', text: 'Using head -20 and clear pass/fail signals helps Claude parse results quickly without being overwhelmed by verbose tool output.' },
+      { icon: '🔌', title: 'Adapt to Your Stack', text: 'Replace npm run lint / npm test with your actual commands. The pattern (check → label → capture output) works for any stack.' },
+      { icon: '⚡', title: 'Exit Codes Matter', text: 'The script exits 1 on failure. Claude sees this and flags it in the review summary. Correct exit codes are how scripts communicate status.' }
+    ],
+    template: `#!/bin/bash
+# quality-check.sh — Automated checks before PR review
+set -uo pipefail
+
+PASS=0; FAIL=0
+
+check() {
+  local label="$1"; shift
+  echo -n "→ $label... "
+  if "$@" &>/dev/null; then
+    echo "✅"; ((PASS++)) || true
+  else
+    echo "⚠️  issues found"
+    "$@" 2>&1 | head -20
+    ((FAIL++)) || true
+  fi
+}
+
+echo "🔍 Running quality checks..."
+check "Lint"       npm run lint
+check "Tests"      npm test
+check "Type check" npx tsc --noEmit
+
+echo "✅ $PASS passed   ⚠️  $FAIL failed"
+[ "$FAIL" -gt 0 ] && exit 1 || exit 0`
+  },
+
+  'skill-ref': {
+    name: 'review-patterns.md',
+    path: 'skills/pr-review/references/review-patterns.md',
+    tags: [{ label: 'Skill Reference', cls: 'tag-spec' }, { label: 'Domain Knowledge', cls: 'tag-always' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory',
+    kiroEquiv: '.kiro/skills/[name]/references/*.md',
+    what: 'A reference doc Claude loads as domain knowledge during the skill. Contains your team\'s specific standards, checklists, and conventions — not generic advice.',
+    when: 'Any time your skill needs to apply project-specific standards. Put your actual rules here, not in the SKILL.md prompt.',
+    why: 'Update this file = update Claude\'s standards for the whole team. No prompt editing. No re-explaining. Just edit the checklist.',
+    insights: [
+      { icon: '📋', title: 'Living Checklist', text: 'Claude works through these checkboxes during the review. Add a new convention here and it\'s applied in every review immediately.' },
+      { icon: '✏️', title: 'Make It Yours', text: 'Replace the generic items with YOUR team\'s actual rules. This is what differentiates the skill from a generic AI review.' },
+      { icon: '🔄', title: 'Evolves With the Team', text: 'After a postmortem reveals a recurring issue, add it here. The skill gets smarter without touching SKILL.md.' },
+      { icon: '🗂️', title: 'Multiple References OK', text: 'You can have security.md, performance.md, api-standards.md — and load them selectively based on what the PR touches.' }
+    ],
+    template: `# Review Patterns — Team Standards
+
+> Claude loads this during PR review to apply team-specific standards.
+> Replace with YOUR project's actual conventions.
+
+## Security
+- [ ] No secrets or API keys in code
+- [ ] All user input validated (Zod, Joi, etc.)
+- [ ] Auth check on every protected endpoint
+- [ ] SQL uses parameterized queries only
+
+## Performance
+- [ ] No N+1 queries (check loops touching the DB)
+- [ ] No blocking calls in request handlers
+- [ ] Unbounded queries have limits/pagination
+
+## Correctness
+- [ ] Error paths handled explicitly
+- [ ] Edge cases covered: null, empty, zero
+- [ ] Async errors awaited or .catch()-ed
+
+## Code Quality
+- [ ] Functions do one thing
+- [ ] No magic numbers — use named constants
+- [ ] No dead code or commented-out blocks
+
+## Tests
+- [ ] New behaviour has test coverage
+- [ ] Tests cover happy path + at least one error case
+- [ ] No tests deleted to make the PR pass
+
+## Our Conventions
+- [ ] File naming follows existing patterns
+- [ ] No console.log in production paths
+- [ ] API responses match existing shape`
+  },
+
+  'memory-md': {
+    name: 'MEMORY.md',
+    path: '~/.claude/projects/[project]/memory/MEMORY.md',
+    tags: [{ label: 'Auto Memory', cls: 'tag-hook' }, { label: 'Persists Sessions', cls: 'tag-always' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory',
+    kiroEquiv: 'No direct Kiro equivalent — Claude-specific feature',
+    what: 'Claude\'s persistent memory file. Claude automatically reads and updates this across sessions to remember patterns, decisions, and lessons learned on your project.',
+    when: 'Claude manages this automatically when auto-memory is enabled. You can also manually add entries: "Remember that we always use bun, not npm."',
+    why: 'Eliminates the need to re-explain context every session. Claude accumulates project knowledge over time like a team member would.',
+    insights: [
+      { icon: '🧠', title: 'Auto-Updated', text: 'Claude writes to MEMORY.md during sessions when it learns something stable about your project. It also reads it at session start.' },
+      { icon: '📌', title: 'First 200 Lines', text: 'Only the first 200 lines of MEMORY.md are loaded into context. Keep it concise. Create separate topic files for detailed notes.' },
+      { icon: '🗣️', title: 'Explicit Saves', text: 'Say "remember that we use bun not npm" and Claude will save it. Say "forget the X preference" to remove it.' },
+      { icon: '🔍', title: 'What Goes Here', text: 'Stable patterns, confirmed conventions, key file paths, solutions to recurring problems. NOT session-specific task state.' }
+    ],
+    template: `# Project Memory
+
+## Stack & Tools
+- Package manager: bun (not npm)
+- Test runner: vitest
+- Formatter: prettier with single quotes
+
+## Key Patterns
+- API routes live in src/api/[resource].ts
+- Use zod for all input validation
+- Database migrations via drizzle-kit
+
+## Important Paths
+- DB schema: src/db/schema.ts
+- Auth config: src/lib/auth.ts
+- Env types: src/env.ts
+
+## Lessons Learned
+- [Pattern confirmed across multiple sessions]
+- [Recurring problem and its solution]
+
+## User Preferences
+- Prefer concise responses, no filler
+- Always use TypeScript strict mode`
+  },
+
+  'global-claude-md': {
+    name: 'CLAUDE.md (global)',
+    path: '~/.claude/CLAUDE.md',
+    tags: [{ label: 'Global', cls: 'tag-hook' }, { label: 'Always Loaded', cls: 'tag-always' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory',
+    kiroEquiv: 'No direct Kiro equivalent',
+    what: 'A personal global CLAUDE.md at ~/.claude/CLAUDE.md. Loaded in EVERY project, everywhere — your personal Claude defaults and preferences.',
+    when: 'Set it once. Put things that apply to all your projects: communication preferences, global tools you always use, personal coding standards.',
+    why: 'Stops you from repeating "be concise" or "use bun" in every project\'s CLAUDE.md. Your global preferences are always active.',
+    insights: [
+      { icon: '🌍', title: 'Always Active', text: 'The global CLAUDE.md loads in every project, every session. It\'s your personal baseline that project-level CLAUDE.md files add on top of.' },
+      { icon: '👤', title: 'Personal Defaults', text: 'Communication style, preferred tools, global coding standards. Things that are "you" rather than "this project".' },
+      { icon: '🏗️', title: 'Layered System', text: 'Global (~/.claude/CLAUDE.md) + Project (./CLAUDE.md) both load. Project-level settings override or extend global ones.' },
+      { icon: '✏️', title: 'Edit It Now', text: 'Open ~/.claude/CLAUDE.md and add your preferences. They\'ll apply to every Claude Code session you ever run.' }
+    ],
+    template: `# Personal Claude Defaults
+
+## Communication Style
+- Be concise — lead with the answer, not the reasoning
+- No filler phrases or preamble
+- Use code blocks for all code snippets
+- Don't add comments to code I didn't ask you to explain
+
+## My Standard Tools
+- Package manager: bun
+- Formatter: prettier
+- Linter: eslint
+- Test runner: vitest
+
+## My Global Rules
+- Never commit without my explicit request
+- Never push to remote without explicit ask
+- Always use TypeScript strict mode
+- Prefer editing existing files over creating new ones
+- Don't over-engineer — solve the current problem only
+
+## My Preferred Workflow
+- Read files before modifying them
+- Run tests after changes
+- One change at a time, clearly explained`
+  }
+};
+
+// ── Tree definition ────────────────────────────────────────────────────────
+const TREE = [
+  {
+    id: 'root-project', label: 'your-project/', icon: '📁', type: 'folder', open: true,
+    children: [
+      { id: 'claude-md', label: 'CLAUDE.md', icon: '📄', badge: 'ALWAYS', badgeCls: 'badge-always' },
+      {
+        id: 'claude-dir', label: '.claude/', icon: '⚙️', type: 'folder', open: true,
+        children: [
+          { id: 'settings-json', label: 'settings.json', icon: '📄', badge: 'HOOKS+MCP', badgeCls: 'badge-hook' },
+          {
+            id: 'commands-dir', label: 'commands/', icon: '💬', type: 'folder', open: true,
+            children: [
+              { id: 'cmd-commit', label: 'commit.md', icon: '📄', badge: '/cmd', badgeCls: 'badge-cmd' },
+              { id: 'cmd-review', label: 'review.md', icon: '📄', badge: '/cmd', badgeCls: 'badge-cmd' },
+              { id: 'cmd-debug',  label: 'debug.md',  icon: '📄', badge: '/cmd', badgeCls: 'badge-cmd' },
+              { id: 'cmd-test',   label: 'test.md',   icon: '📄', badge: '/cmd', badgeCls: 'badge-cmd' },
+              { id: 'cmd-spec',   label: 'spec.md',   icon: '📄', badge: '/cmd', badgeCls: 'badge-cmd' },
+            ]
+          },
+          { id: 'memory-md', label: 'memory/MEMORY.md', icon: '🧠', badge: 'AUTO', badgeCls: 'badge-always' },
+        ]
+      },
+      {
+        id: 'specs-dir', label: 'specs/', icon: '📋', type: 'folder', open: true,
+        children: [
+          {
+            id: 'feature-dir', label: 'example-feature/', icon: '📁', type: 'folder', open: true,
+            children: [
+              { id: 'specs-requirements', label: 'requirements.md', icon: '📄' },
+              { id: 'specs-design',       label: 'design.md',       icon: '📄' },
+              { id: 'specs-tasks',        label: 'tasks.md',        icon: '📄' },
+            ]
+          }
+        ]
+      },
+      {
+        id: 'skills-dir', label: 'skills/', icon: '🎯', type: 'folder', open: true,
+        children: [
+          {
+            id: 'pr-review-dir', label: 'pr-review/', icon: '📁', type: 'folder', open: true,
+            children: [
+              { id: 'skill-md',     label: 'SKILL.md',             icon: '📄', badge: 'SKILL', badgeCls: 'badge-cmd' },
+              { id: 'skill-script', label: 'scripts/quality-check.sh', icon: '📄', badge: 'RUN', badgeCls: 'badge-hook' },
+              { id: 'skill-ref',    label: 'references/review-patterns.md', icon: '📄', badge: 'REF', badgeCls: 'badge-always' },
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'global-root', label: '~/.claude/ (global)', icon: '🌍', type: 'folder', open: false,
+    children: [
+      { id: 'global-claude-md', label: 'CLAUDE.md', icon: '📄', badge: 'GLOBAL', badgeCls: 'badge-always' },
+    ]
+  }
+];
+
+// ── State ──────────────────────────────────────────────────────────────────
+let activeTab = 'explain';
+let activeFile = null;
+
+// ── Render tree ────────────────────────────────────────────────────────────
+function renderTree(nodes, container) {
+  const ul = document.createElement('ul');
+  ul.style.listStyle = 'none';
+  ul.style.paddingLeft = container === document.getElementById('tree') ? '0' : '14px';
+
+  nodes.forEach(node => {
+    const li = document.createElement('li');
+
+    if (node.type === 'folder') {
+      const header = document.createElement('div');
+      header.className = 'folder-header' + (node.open ? '' : ' collapsed');
+      header.innerHTML = `<span class="chevron">▼</span><span style="font-size:15px">${node.icon}</span><span>${node.label}</span>`;
+      header.onclick = () => {
+        const isCollapsed = header.classList.toggle('collapsed');
+        childrenDiv.classList.toggle('collapsed', isCollapsed);
+      };
+      li.appendChild(header);
+
+      const childrenDiv = document.createElement('div');
+      childrenDiv.className = 'folder-children' + (node.open ? '' : ' collapsed');
+      renderTree(node.children || [], childrenDiv);
+      li.appendChild(childrenDiv);
+    } else {
+      const item = document.createElement('div');
+      item.className = 'tree-item';
+      item.dataset.id = node.id;
+      let badgeHtml = node.badge ? `<span class="tree-badge ${node.badgeCls || ''}">${node.badge}</span>` : '';
+      item.innerHTML = `<span class="icon">${node.icon}</span><span class="label">${node.label}</span>${badgeHtml}`;
+      item.onclick = () => selectFile(node.id, item);
+      li.appendChild(item);
+    }
+
+    ul.appendChild(li);
+  });
+
+  container.appendChild(ul);
+}
+
+function selectFile(id, el) {
+  // Deactivate previous
+  document.querySelectorAll('.tree-item.active').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+
+  activeFile = id;
+  const data = FILES[id];
+  if (!data) return;
+
+  // Show file view
+  document.getElementById('welcome').style.display = 'none';
+  const fv = document.getElementById('file-view');
+  fv.style.display = 'flex';
+
+  // Set header
+  document.getElementById('dv-title').textContent = data.name;
+  const tagsEl = document.getElementById('dv-tags');
+  tagsEl.innerHTML = data.tags.map(t => `<span class="tag ${t.cls}">${t.label}</span>`).join('');
+
+  // Set docs link
+  document.getElementById('dv-docs-link').href = data.docsUrl;
+
+  // Render active tab
+  showTab(activeTab);
+}
+
+function showTab(tab) {
+  activeTab = tab;
+  document.getElementById('tab-explain').classList.toggle('active', tab === 'explain');
+  document.getElementById('tab-preview').classList.toggle('active', tab === 'preview');
+
+  const data = FILES[activeFile];
+  if (!data) return;
+  const body = document.getElementById('dv-body');
+
+  if (tab === 'explain') {
+    body.innerHTML = `
+      <div class="explain-grid">
+        <div class="explain-card">
+          <h4>📌 What is it?</h4>
+          <p>${data.what}</p>
+        </div>
+        <div class="explain-card">
+          <h4>⏰ When to use it?</h4>
+          <p>${data.when}</p>
+        </div>
+        <div class="explain-card">
+          <h4>💡 Why?</h4>
+          <p>${data.why}</p>
+        </div>
+        <div class="explain-card">
+          <h4>🔄 Kiro equivalent</h4>
+          <p>In Kiro, this maps to: <code style="background:var(--bg3);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:12px">${data.kiroEquiv}</code></p>
+        </div>
+      </div>
+      <div class="example-block">
+        <div class="example-block-header">
+          <span>📝 Example / Template</span>
+          <button class="btn" style="padding:4px 10px;font-size:11px" onclick="copyTemplate()">Copy</button>
+        </div>
+        <pre>${escapeHtml(data.template)}</pre>
+      </div>`;
+  } else {
+    const insightsHtml = (data.insights || []).map(i => `
+      <div class="insight-item">
+        <h5>${i.icon} ${i.title}</h5>
+        <p>${i.text}</p>
+      </div>`).join('');
+
+    body.innerHTML = `
+      <div class="live-grid">
+        <div class="live-card">
+          <div class="live-card-header">📄 File Template</div>
+          <div class="live-card-body"><pre>${escapeHtml(data.template)}</pre></div>
+        </div>
+        <div class="live-card">
+          <div class="live-card-header">🧠 How Claude Uses This</div>
+          <div class="live-card-body">${insightsHtml}</div>
+        </div>
+      </div>`;
+  }
+}
+
+function copyTemplate() {
+  const data = FILES[activeFile];
+  if (!data) return;
+  navigator.clipboard.writeText(data.template).then(() => {
+    const fb = document.getElementById('copy-feedback');
+    fb.classList.add('show');
+    setTimeout(() => fb.classList.remove('show'), 2000);
+  });
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── Wizard ──────────────────────────────────────────────────────────────────
+function openWizard() {
+  document.getElementById('wizard-overlay').classList.add('open');
+  updatePreview();
+}
+function closeWizard() {
+  document.getElementById('wizard-overlay').classList.remove('open');
+}
+function overlayClick(e) {
+  if (e.target === document.getElementById('wizard-overlay')) closeWizard();
+}
+
+function val(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function updatePMDefaults() {
+  const pm = val('w-pm');
+  const map = { bun: ['bun run dev','bun test','bun run build','bun run lint'],
+                npm: ['npm run dev','npm test','npm run build','npm run lint'],
+                pnpm: ['pnpm dev','pnpm test','pnpm build','pnpm lint'],
+                yarn: ['yarn dev','yarn test','yarn build','yarn lint'],
+                pip:  ['python main.py','pytest','python -m build','flake8 .'],
+                go:   ['go run .','go test ./...','go build ./...','golangci-lint run'] };
+  const cmds = map[pm] || map['npm'];
+  const fields = ['w-cmd-dev','w-cmd-test','w-cmd-build','w-cmd-lint'];
+  fields.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el && !el.value) el.placeholder = cmds[i];
+  });
+}
+
+function getConstraints() {
+  return Array.from(document.querySelectorAll('#constraints-list .constraint-row input'))
+    .map(i => i.value.trim()).filter(Boolean);
+}
+
+function addConstraint() {
+  const list = document.getElementById('constraints-list');
+  const row = document.createElement('div');
+  row.className = 'constraint-row';
+  row.innerHTML = `<input type="text" placeholder="e.g. Do not modify [file] without updating [related]" oninput="updatePreview()" /><button class="remove-btn" onclick="removeConstraint(this)" title="Remove">×</button>`;
+  list.appendChild(row);
+  row.querySelector('input').focus();
+}
+
+function removeConstraint(btn) {
+  btn.closest('.constraint-row').remove();
+  updatePreview();
+}
+
+function buildCLAUDEmd() {
+  const name        = val('w-name')      || 'My Project';
+  const desc        = val('w-desc')      || 'A web application.';
+  const users       = val('w-users')     || 'Engineering teams';
+  const lang        = val('w-lang')      || 'TypeScript';
+  const pm          = val('w-pm')        || 'npm';
+  const framework   = val('w-framework');
+  const db          = val('w-db');
+  const libs        = val('w-libs');
+  const pattern     = val('w-pattern')   || 'REST API + frontend';
+  const arch        = val('w-arch');
+  const focus       = val('w-focus');
+  const constraints = getConstraints();
+
+  const pmCmds = { bun: ['bun run dev','bun test','bun run build','bun run lint'],
+                   npm: ['npm run dev','npm test','npm run build','npm run lint'],
+                   pnpm:['pnpm dev','pnpm test','pnpm build','pnpm lint'],
+                   yarn:['yarn dev','yarn test','yarn build','yarn lint'],
+                   pip: ['python main.py','pytest','python -m build','flake8 .'],
+                   go:  ['go run .','go test ./...','go build ./...','golangci-lint run'] };
+  const [devCmd, testCmd, buildCmd, lintCmd] = pmCmds[pm] || pmCmds['npm'];
+
+  const cmdDev   = val('w-cmd-dev')   || devCmd;
+  const cmdTest  = val('w-cmd-test')  || testCmd;
+  const cmdBuild = val('w-cmd-build') || buildCmd;
+  const cmdLint  = val('w-cmd-lint')  || lintCmd;
+
+  // Tech stack lines
+  const stackLines = [`- **Language**: ${lang}`, `- **Package Manager**: ${pm}`];
+  if (framework) stackLines.push(`- **Framework**: ${framework}`);
+  if (db)        stackLines.push(`- **Database**: ${db}`);
+  if (libs)      libs.split(',').map(l => l.trim()).filter(Boolean)
+                     .forEach(l => stackLines.push(`- **Library**: ${l}`));
+
+  // Architecture block
+  let archBlock;
+  if (arch) {
+    archBlock = arch.split('\n').map(l => `- \`${l.trim()}\``).join('\n');
+  } else {
+    archBlock = `- \`src/\` — Main source code\n- \`tests/\` — Test suite`;
+  }
+
+  // Constraints
+  const constraintLines = constraints.length
+    ? constraints.map(c => `- ${c}`).join('\n')
+    : `- Never hardcode secrets — use environment variables\n- Always run \`${cmdTest}\` before suggesting a commit`;
+
+  // Focus section
+  const focusBlock = focus
+    ? `\n## Current Focus\n- [ ] ${focus}\n`
+    : '';
+
+  return `# ${name}
+
+## Project Overview
+${desc}
+
+**Users**: ${users}
+**Pattern**: ${pattern}
+
+## Tech Stack
+${stackLines.join('\n')}
+
+## Architecture
+${archBlock}
+
+## Common Commands
+\`\`\`bash
+${cmdDev.padEnd(22)}# Start dev server
+${cmdTest.padEnd(22)}# Run tests
+${cmdBuild.padEnd(22)}# Production build
+${cmdLint.padEnd(22)}# Lint + format
+\`\`\`
+
+## Code Conventions
+- Follow existing patterns in the codebase before introducing new ones
+- Keep changes focused — don't refactor code you weren't asked to change
+- Add comments only where logic is non-obvious
+
+## Key Constraints
+${constraintLines}
+${focusBlock}`;
+}
+
+function syntaxHighlight(raw) {
+  return raw.split('\n').map(line => {
+    const e = line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    if (/^# /.test(line))   return `<span class="sh-h1">${e}</span>`;
+    if (/^## /.test(line))  return `<span class="sh-h2">${e}</span>`;
+    if (/^### /.test(line)) return `<span class="sh-h3">${e}</span>`;
+    if (/^```/.test(line))  return `<span class="sh-code">${e}</span>`;
+    if (/^\*\*/.test(line.trimStart()) || /^- \*\*/.test(line)) {
+      return e.replace(/\*\*([^*]+)\*\*/g, '<span class="sh-key">**$1**</span>');
+    }
+    if (/^- /.test(line))   return `<span class="sh-li">${e.replace(/`([^`]+)`/g,'<span class="sh-code">`$1`</span>')}</span>`;
+    return e.replace(/`([^`]+)`/g,'<span class="sh-code">`$1`</span>');
+  }).join('\n');
+}
+
+function updatePreview() {
+  const md = buildCLAUDEmd();
+  document.getElementById('wizard-preview').innerHTML = syntaxHighlight(md);
+}
+
+function copyWizardOutput() {
+  navigator.clipboard.writeText(buildCLAUDEmd()).then(() => {
+    const fb = document.getElementById('copy-feedback');
+    fb.textContent = '✓ CLAUDE.md copied!';
+    fb.classList.add('show');
+    setTimeout(() => { fb.classList.remove('show'); fb.textContent = '✓ Copied to clipboard!'; }, 2500);
+  });
+}
+
+function downloadWizardOutput() {
+  const content = buildCLAUDEmd();
+  const blob = new Blob([content], { type: 'text/markdown' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'CLAUDE.md';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ── ZIP Download ─────────────────────────────────────────────────────────────
+async function downloadSkeleton() {
+  const btn = event.currentTarget;
+  btn.textContent = '⏳ Building ZIP...';
+  btn.disabled = true;
+
+  try {
+    // Load JSZip dynamically
+    if (!window.JSZip) {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+        s.onload = resolve; s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+
+    const zip = new JSZip();
+
+    // CLAUDE.md
+    zip.file('CLAUDE.md', `# [Project Name]
+
+## Project Overview
+A [brief description] for [target users].
+
+## Tech Stack
+- **Language**: TypeScript / Python / Go
+- **Framework**: Next.js / FastAPI / ...
+- **Database**: PostgreSQL / MongoDB / ...
+- **Package Manager**: bun / npm / pnpm
+
+## Architecture
+- \`src/\` — Main source code
+- \`tests/\` — Test suite
+
+## Common Commands
+\`\`\`bash
+bun run dev    # Start dev server
+bun test       # Run tests
+bun run build  # Production build
+bun run lint   # Lint + format
+\`\`\`
+
+## Code Conventions
+- Follow existing patterns before introducing new ones
+- Keep changes focused — don't refactor unrequested code
+
+## Key Constraints
+- Never hardcode secrets — use environment variables
+- Always run tests before suggesting a commit
+`);
+
+    // .claude/settings.json
+    zip.file('.claude/settings.json', `{
+  "permissions": {
+    "allow": [
+      "Bash(bun run *)",
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add *)",
+      "Bash(git commit*)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push --force*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run lint --fix 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  },
+  "mcpServers": {}
+}
+`);
+
+    // Commands
+    const commands = {
+      'commit.md': `---\ndescription: Create a conventional commit after reviewing all staged changes\n---\n\nReview all changes and create a well-formatted git commit.\n\n1. Run \`git status\` and \`git diff --staged\`\n2. Pick type: \`feat\` / \`fix\` / \`docs\` / \`refactor\` / \`test\` / \`chore\`\n3. Write a concise subject line (≤72 chars, imperative mood)\n4. Stage the right files and commit — do NOT push unless explicitly asked\n`,
+      'review.md': `---\ndescription: Review code for bugs, security issues, and quality problems\n---\n\nReview the code in $ARGUMENTS (or recent changes if no argument given).\n\nCheck for:\n1. **Bugs** — Logic errors, null/undefined, race conditions\n2. **Security** — Injection, XSS, auth bypass, secrets in code\n3. **Performance** — N+1 queries, blocking calls, memory leaks\n4. **Style** — Consistent with conventions in CLAUDE.md?\n\nFormat: \`file:line → issue → suggested fix\`. Skip praise.\n`,
+      'debug.md':  `---\ndescription: Systematically diagnose and fix a bug\n---\n\nDebug the issue: $ARGUMENTS\n\n1. **Reproduce** — Confirm the exact error/behavior\n2. **Locate** — Find the relevant code paths\n3. **Hypothesize** — Form 2-3 root cause candidates\n4. **Verify** — Test each hypothesis\n5. **Fix** — Minimal change that addresses the root cause\n6. **Confirm** — Run tests to verify\n7. **Clean up** — Remove any debug logs\n\nDo not guess. Understand the cause before fixing.\n`,
+      'test.md':   `---\ndescription: Write tests for a given file or feature\n---\n\nWrite tests for: $ARGUMENTS\n\n1. Read the target file to understand what needs testing\n2. Check existing tests to match the project's patterns\n3. Cover: happy path, edge cases, error cases\n4. Run the test command to verify all tests pass\n5. If tests fail, fix the issue — do not delete the test\n`,
+      'spec.md':   `---\ndescription: Create a feature spec before building (requirements, design, tasks)\n---\n\nCreate a spec for: $ARGUMENTS\n\nGenerate three files in \`specs/[feature-name]/\`:\n\n**requirements.md** — User stories, acceptance criteria, non-goals\n**design.md** — Data model, API changes, component structure, decisions\n**tasks.md** — Ordered checkbox build plan, one Claude session per task\n\nDo not start building until the spec is reviewed and approved.\n`,
+    };
+    Object.entries(commands).forEach(([name, content]) => {
+      zip.file(`.claude/commands/${name}`, content);
+    });
+
+    // Skills
+    zip.file('skills/pr-review/SKILL.md', `---\ndescription: Comprehensive PR review — checks quality, security, tests, and conventions\n---\n\n# PR Review Skill\n\nReview the PR or changed files for production readiness.\n\n## Steps\n\n1. **Understand the change**\n   - Run \`git diff main...HEAD --stat\`\n   - Identify what problem this solves\n\n2. **Run automated checks**\n   - Execute \`skills/pr-review/scripts/quality-check.sh\`\n   - Note any lint, test, or type errors\n\n3. **Review against team patterns**\n   - Load \`skills/pr-review/references/review-patterns.md\`\n   - Work through each checklist category\n\n4. **Write the review**\n   - Format: \`file:line → [🔴 blocker | 🟡 warning | 🟢 suggestion] → issue → fix\`\n   - Skip praise — only actionable feedback\n\n5. **Summary**\n   - ✅ Ready / 🟡 Minor changes / 🔴 Needs rework\n   - Nothing merges with a 🔴\n`);
+    zip.file('skills/pr-review/scripts/quality-check.sh', `#!/bin/bash\n# quality-check.sh — Automated checks before PR review\nset -uo pipefail\n\nPASS=0; FAIL=0\n\ncheck() {\n  local label="$1"; shift\n  echo -n "→ $label... "\n  if "$@" &>/dev/null; then\n    echo "✅"; ((PASS++)) || true\n  else\n    echo "⚠️  issues found"\n    "$@" 2>&1 | head -20\n    ((FAIL++)) || true\n  fi\n}\n\necho "🔍 Running quality checks..."\ncheck "Lint"       npm run lint\ncheck "Tests"      npm test\ncheck "Type check" npx tsc --noEmit\n\necho "✅ $PASS passed   ⚠️  $FAIL failed"\n[ "$FAIL" -gt 0 ] && exit 1 || exit 0\n`);
+    zip.file('skills/pr-review/references/review-patterns.md', `# Review Patterns — Team Standards\n\n> Claude loads this during PR review to apply team-specific standards.\n\n## Security\n- [ ] No secrets or API keys in code\n- [ ] All user input validated (Zod, Joi, etc.)\n- [ ] Auth check on every protected endpoint\n- [ ] SQL uses parameterized queries only\n\n## Performance\n- [ ] No N+1 queries\n- [ ] No blocking calls in request handlers\n- [ ] Unbounded queries have limits/pagination\n\n## Correctness\n- [ ] Error paths handled explicitly\n- [ ] Edge cases covered: null, empty, zero\n\n## Code Quality\n- [ ] Functions do one thing\n- [ ] No magic numbers — use named constants\n- [ ] No dead code\n\n## Tests\n- [ ] New behaviour has test coverage\n- [ ] Tests cover happy path + at least one error case\n- [ ] No tests deleted to make the PR pass\n\n## Our Conventions\n- [ ] File naming follows existing patterns\n- [ ] No console.log in production paths\n- [ ] API responses match existing shape\n`);
+
+    // Specs example
+    zip.file('specs/example-feature/requirements.md', `# Feature: [Feature Name] — Requirements\n\n## User Stories\n- As a [role], I want to [action] so that [outcome].\n\n## Acceptance Criteria\n- [ ] [Specific, testable condition]\n- [ ] Error states are handled gracefully\n\n## Out of Scope\n- [Explicitly NOT building this]\n`);
+    zip.file('specs/example-feature/design.md', `# Feature: [Feature Name] — Design\n\n## Data Model\n\`\`\`sql\n-- schema changes here\n\`\`\`\n\n## API Changes\n| Method | Path | Description |\n|--------|------|-------------|\n| POST | \`/api/feature\` | Create item |\n\n## Key Decisions\n- **[Decision]**: Chose [A] over [B] because [reason].\n`);
+    zip.file('specs/example-feature/tasks.md', `# Feature: [Feature Name] — Tasks\n\n## Phase 1: Backend\n- [ ] Add DB migration\n- [ ] Create service layer\n- [ ] Add API endpoint + tests\n\n## Phase 2: Frontend\n- [ ] Build UI components\n- [ ] Wire up API calls\n- [ ] Handle loading + error states\n`);
+
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'claude-skeleton.zip';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  } catch(err) {
+    alert('Download failed: ' + err.message);
+  } finally {
+    btn.textContent = '⬇️ Download Skeleton';
+    btn.disabled = false;
+  }
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+renderTree(TREE, document.getElementById('tree'));
+</script>
+</body>
+</html>
