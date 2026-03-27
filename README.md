@@ -2,7 +2,7 @@
 
 > The Claude Code project skeleton — every file explained, with copy-ready templates and a live CLAUDE.md generator.
 
-**[→ Open the Interactive Explorer](https://your-username.github.io/claude-anatomy)**
+**[→ Open the Interactive Explorer](https://otymix.github.io/claude_anatomy/)**
 
 Built for Claude Code builders who want the same structured project skeleton that Kiro (AWS) provides — but for Claude.
 
@@ -61,7 +61,7 @@ Click "⬇️ Download Skeleton" in the explorer to get a `claude-skeleton.zip` 
 
 **Option 3 — Clone this repo**
 ```bash
-git clone https://github.com/your-username/claude-anatomy.git
+git clone https://github.com/otymix/claude_anatomy.git
 cp -r claude-anatomy/skeleton/. your-project/
 ```
 
