@@ -1,0 +1,11 @@
+{
+  "name": "my-plugin",
+  "version": "1.0.0",
+  "description": "A curated set of skills and agents for [your use case]",
+  "skills": [
+    "skills/pr-review"
+  ],
+  "agents": [
+    "agents/code-reviewer.md"
+  ]
+}

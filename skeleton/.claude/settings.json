@@ -35,13 +35,40 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Session started at' $(date) >> .claude/sessions.log 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Session ended at' $(date) >> .claude/sessions.log 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[notification] $CLAUDE_NOTIFICATION_MESSAGE' >> .claude/notifications.log 2>/dev/null || true"
+          }
+        ]
+      }
     ]
   },
-  "mcpServers": {
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
-      "env": {}
-    }
+  "env": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80",
+    "MAX_THINKING_TOKENS": "10000"
   }
 }

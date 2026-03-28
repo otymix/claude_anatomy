@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Claude Anatomy — Interactive Explorer</title>
+  <link rel="icon" href="https://claude.ai/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://claude.ai/images/claude_app_icon.png" />
+  <meta property="og:title" content="Claude Code Project Anatomy" />
+  <meta property="og:description" content="Every .claude/ file explained — CLAUDE.md, settings.json, hooks, skills, agents, rules, and more. Interactive explorer with copy-ready templates." />
+  <meta property="og:image" content="https://claude.ai/images/claude_ogimage.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://claude.ai/images/claude_ogimage.png" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -601,7 +609,7 @@
 
 <header>
   <div class="logo">
-    <div class="logo-icon">⚡</div>
+    <div class="logo-icon"><svg width="28" height="28" viewBox="0 0 248 248" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M52.4285 162.873L98.7844 136.879L99.5485 134.602L98.7844 133.334H96.4921L88.7237 132.862L62.2346 132.153L39.3113 131.207L17.0249 130.026L11.4214 128.844L6.2 121.873L6.7094 118.447L11.4214 115.257L18.171 115.847L33.0711 116.911L55.485 118.447L71.6586 119.392L95.728 121.873H99.5485L100.058 120.337L98.7844 119.392L97.7656 118.447L74.5877 102.732L49.4995 86.1905L36.3823 76.62L29.3779 71.7757L25.8121 67.2858L24.2839 57.3608L30.6515 50.2716L39.3113 50.8623L41.4763 51.4531L50.2636 58.1879L68.9842 72.7209L93.4357 90.6804L97.0015 93.6343L98.4374 92.6652L98.6571 91.9801L97.0015 89.2625L83.757 65.2772L69.621 40.8192L63.2534 30.6579L61.5978 24.632C60.9565 22.1032 60.579 20.0111 60.579 17.4246L67.8381 7.49965L71.9133 6.19995L81.7193 7.49965L85.7946 11.0443L91.9074 24.9865L101.714 46.8451L116.996 76.62L121.453 85.4816L123.873 93.6343L124.764 96.1155H126.292V94.6976L127.566 77.9197L129.858 57.3608L132.15 30.8942L132.915 23.4505L136.608 14.4708L143.994 9.62643L149.725 12.344L154.437 19.0788L153.8 23.4505L150.998 41.6463L145.522 70.1215L141.957 89.2625H143.994L146.414 86.7813L156.093 74.0206L172.266 53.698L179.398 45.6635L187.803 36.802L193.152 32.5484H203.34L210.726 43.6549L207.415 55.1159L196.972 68.3492L188.312 79.5739L175.896 96.2095L168.191 109.585L168.882 110.689L170.738 110.53L198.755 104.504L213.91 101.787L231.994 98.7149L240.144 102.496L241.036 106.395L237.852 114.311L218.495 119.037L195.826 123.645L162.07 131.592L161.696 131.893L162.137 132.547L177.36 133.925L183.855 134.279H199.774L229.447 136.524L237.215 141.605L241.8 147.867L241.036 152.711L229.065 158.737L213.019 154.956L175.45 145.977L162.587 142.787H160.805V143.85L171.502 154.366L191.242 172.089L215.82 195.011L217.094 200.682L213.91 205.172L210.599 204.699L188.949 188.394L180.544 181.069L161.696 165.118H160.422V166.772L164.752 173.152L187.803 207.771L188.949 218.405L187.294 221.832L181.308 223.959L174.813 222.777L161.187 203.754L147.305 182.486L136.098 163.345L134.745 164.2L128.075 235.42L125.019 239.082L117.887 241.8L111.902 237.31L108.718 229.984L111.902 215.452L115.722 196.547L118.779 181.541L121.58 162.873L123.291 156.636L123.14 156.219L121.773 156.449L107.699 175.752L86.304 204.699L69.3663 222.777L65.291 224.431L58.2867 220.768L58.9235 214.27L62.8713 208.48L86.304 178.705L100.44 160.155L109.551 149.507L109.462 147.967L108.959 147.924L46.6977 188.512L35.6182 189.93L30.7788 185.44L31.4156 178.115L33.7079 175.752L52.4285 162.873Z" fill="#D97757"/></svg></div>
     Claude Anatomy
   </div>
   <div class="header-sub">Click any file to learn what it does, when to use it, and see real templates.</div>
@@ -626,10 +634,30 @@
   <!-- Detail -->
   <div class="detail-panel" id="detail-panel">
     <div class="welcome" id="welcome">
-      <div style="font-size:48px;margin-bottom:16px;">⚡</div>
+      <div style="margin-bottom:16px;"><svg width="64" height="64" viewBox="0 0 248 248" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M52.4285 162.873L98.7844 136.879L99.5485 134.602L98.7844 133.334H96.4921L88.7237 132.862L62.2346 132.153L39.3113 131.207L17.0249 130.026L11.4214 128.844L6.2 121.873L6.7094 118.447L11.4214 115.257L18.171 115.847L33.0711 116.911L55.485 118.447L71.6586 119.392L95.728 121.873H99.5485L100.058 120.337L98.7844 119.392L97.7656 118.447L74.5877 102.732L49.4995 86.1905L36.3823 76.62L29.3779 71.7757L25.8121 67.2858L24.2839 57.3608L30.6515 50.2716L39.3113 50.8623L41.4763 51.4531L50.2636 58.1879L68.9842 72.7209L93.4357 90.6804L97.0015 93.6343L98.4374 92.6652L98.6571 91.9801L97.0015 89.2625L83.757 65.2772L69.621 40.8192L63.2534 30.6579L61.5978 24.632C60.9565 22.1032 60.579 20.0111 60.579 17.4246L67.8381 7.49965L71.9133 6.19995L81.7193 7.49965L85.7946 11.0443L91.9074 24.9865L101.714 46.8451L116.996 76.62L121.453 85.4816L123.873 93.6343L124.764 96.1155H126.292V94.6976L127.566 77.9197L129.858 57.3608L132.15 30.8942L132.915 23.4505L136.608 14.4708L143.994 9.62643L149.725 12.344L154.437 19.0788L153.8 23.4505L150.998 41.6463L145.522 70.1215L141.957 89.2625H143.994L146.414 86.7813L156.093 74.0206L172.266 53.698L179.398 45.6635L187.803 36.802L193.152 32.5484H203.34L210.726 43.6549L207.415 55.1159L196.972 68.3492L188.312 79.5739L175.896 96.2095L168.191 109.585L168.882 110.689L170.738 110.53L198.755 104.504L213.91 101.787L231.994 98.7149L240.144 102.496L241.036 106.395L237.852 114.311L218.495 119.037L195.826 123.645L162.07 131.592L161.696 131.893L162.137 132.547L177.36 133.925L183.855 134.279H199.774L229.447 136.524L237.215 141.605L241.8 147.867L241.036 152.711L229.065 158.737L213.019 154.956L175.45 145.977L162.587 142.787H160.805V143.85L171.502 154.366L191.242 172.089L215.82 195.011L217.094 200.682L213.91 205.172L210.599 204.699L188.949 188.394L180.544 181.069L161.696 165.118H160.422V166.772L164.752 173.152L187.803 207.771L188.949 218.405L187.294 221.832L181.308 223.959L174.813 222.777L161.187 203.754L147.305 182.486L136.098 163.345L134.745 164.2L128.075 235.42L125.019 239.082L117.887 241.8L111.902 237.31L108.718 229.984L111.902 215.452L115.722 196.547L118.779 181.541L121.58 162.873L123.291 156.636L123.14 156.219L121.773 156.449L107.699 175.752L86.304 204.699L69.3663 222.777L65.291 224.431L58.2867 220.768L58.9235 214.27L62.8713 208.48L86.304 178.705L100.44 160.155L109.551 149.507L109.462 147.967L108.959 147.924L46.6977 188.512L35.6182 189.93L30.7788 185.44L31.4156 178.115L33.7079 175.752L52.4285 162.873Z" fill="#D97757"/></svg></div>
       <h2>Claude Code Project Anatomy</h2>
-      <p>Select a file from the tree to learn what it does, when to use it, and get a copy-ready template.<br><br>
-      This mirrors the <strong>.kiro/</strong> skeleton from AWS Kiro — but for <strong>Claude Code</strong>.</p>
+      <p>Select a file from the tree to learn what it does, when to use it, and get a copy-ready template.</p>
+
+      <div style="display:flex;gap:8px;margin:20px 0;width:100%;max-width:520px;">
+        <div style="flex:1;background:rgba(217,119,6,0.15);border:1px solid rgba(217,119,6,0.4);border-radius:10px;padding:12px 14px;text-align:left;">
+          <div style="margin-bottom:4px;"><svg width="20" height="20" viewBox="0 0 248 248" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M52.4285 162.873L98.7844 136.879L99.5485 134.602L98.7844 133.334H96.4921L88.7237 132.862L62.2346 132.153L39.3113 131.207L17.0249 130.026L11.4214 128.844L6.2 121.873L6.7094 118.447L11.4214 115.257L18.171 115.847L33.0711 116.911L55.485 118.447L71.6586 119.392L95.728 121.873H99.5485L100.058 120.337L98.7844 119.392L97.7656 118.447L74.5877 102.732L49.4995 86.1905L36.3823 76.62L29.3779 71.7757L25.8121 67.2858L24.2839 57.3608L30.6515 50.2716L39.3113 50.8623L41.4763 51.4531L50.2636 58.1879L68.9842 72.7209L93.4357 90.6804L97.0015 93.6343L98.4374 92.6652L98.6571 91.9801L97.0015 89.2625L83.757 65.2772L69.621 40.8192L63.2534 30.6579L61.5978 24.632C60.9565 22.1032 60.579 20.0111 60.579 17.4246L67.8381 7.49965L71.9133 6.19995L81.7193 7.49965L85.7946 11.0443L91.9074 24.9865L101.714 46.8451L116.996 76.62L121.453 85.4816L123.873 93.6343L124.764 96.1155H126.292V94.6976L127.566 77.9197L129.858 57.3608L132.15 30.8942L132.915 23.4505L136.608 14.4708L143.994 9.62643L149.725 12.344L154.437 19.0788L153.8 23.4505L150.998 41.6463L145.522 70.1215L141.957 89.2625H143.994L146.414 86.7813L156.093 74.0206L172.266 53.698L179.398 45.6635L187.803 36.802L193.152 32.5484H203.34L210.726 43.6549L207.415 55.1159L196.972 68.3492L188.312 79.5739L175.896 96.2095L168.191 109.585L168.882 110.689L170.738 110.53L198.755 104.504L213.91 101.787L231.994 98.7149L240.144 102.496L241.036 106.395L237.852 114.311L218.495 119.037L195.826 123.645L162.07 131.592L161.696 131.893L162.137 132.547L177.36 133.925L183.855 134.279H199.774L229.447 136.524L237.215 141.605L241.8 147.867L241.036 152.711L229.065 158.737L213.019 154.956L175.45 145.977L162.587 142.787H160.805V143.85L171.502 154.366L191.242 172.089L215.82 195.011L217.094 200.682L213.91 205.172L210.599 204.699L188.949 188.394L180.544 181.069L161.696 165.118H160.422V166.772L164.752 173.152L187.803 207.771L188.949 218.405L187.294 221.832L181.308 223.959L174.813 222.777L161.187 203.754L147.305 182.486L136.098 163.345L134.745 164.2L128.075 235.42L125.019 239.082L117.887 241.8L111.902 237.31L108.718 229.984L111.902 215.452L115.722 196.547L118.779 181.541L121.58 162.873L123.291 156.636L123.14 156.219L121.773 156.449L107.699 175.752L86.304 204.699L69.3663 222.777L65.291 224.431L58.2867 220.768L58.9235 214.27L62.8713 208.48L86.304 178.705L100.44 160.155L109.551 149.507L109.462 147.967L108.959 147.924L46.6977 188.512L35.6182 189.93L30.7788 185.44L31.4156 178.115L33.7079 175.752L52.4285 162.873Z" fill="#D97757"/></svg></div>
+          <div style="font-size:12px;font-weight:700;color:#f59e0b;margin-bottom:3px;">Claude Code</div>
+          <div style="font-size:11px;color:#8b949e;line-height:1.4;">CLI in your terminal. Edits files, reads your codebase.</div>
+          <div style="margin-top:8px;font-size:10px;background:rgba(217,119,6,0.25);color:#f59e0b;padding:2px 7px;border-radius:10px;display:inline-block;font-weight:700;">← THIS PROJECT</div>
+        </div>
+        <div style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;text-align:left;opacity:0.5;">
+          <div style="font-size:15px;margin-bottom:3px;">🔌</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:3px;">Claude API</div>
+          <div style="font-size:11px;color:#8b949e;line-height:1.4;">REST API. Call Claude from TS/Python code.</div>
+        </div>
+        <div style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;text-align:left;opacity:0.5;">
+          <div style="font-size:15px;margin-bottom:3px;">🤖</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:3px;">Agent SDK</div>
+          <div style="font-size:11px;color:#8b949e;line-height:1.4;">Framework to build multi-agent systems in code.</div>
+        </div>
+      </div>
+
+      <p style="max-width:400px;font-size:13px;color:var(--text2);">Everything here — <code style="background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospace;color:var(--text)">CLAUDE.md</code>, <code style="background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospace;color:var(--text)">settings.json</code>, <code style="background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospace;color:var(--text)">/commands</code>, <code style="background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospace;color:var(--text)">skills/</code> — is specific to the <strong style="color:var(--text)">Claude Code CLI</strong>.</p>
     </div>
     <div id="file-view" style="display:none; flex-direction:column; height:100%;">
       <div class="detail-header">
@@ -824,7 +852,7 @@ const FILES = {
     name: 'CLAUDE.md',
     path: 'CLAUDE.md',
     tags: [{ label: 'Always Loaded', cls: 'tag-always' }, { label: 'Project Root', cls: 'tag-spec' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory',
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory#claude-md-files',
     kiroEquiv: '.kiro/steering/*.md (inclusion: always)',
     what: 'The single most important file. Claude reads it automatically at the start of every session — no prompt needed. Think of it as the steering wheel for your whole project.',
     when: 'Every project should have one. Create it before your first Claude session. Update it whenever your stack, conventions, or key constraints change.',
@@ -878,16 +906,16 @@ npm run lint   # Lint + format
     name: 'settings.json',
     path: '.claude/settings.json',
     tags: [{ label: 'Hooks', cls: 'tag-hook' }, { label: 'Permissions', cls: 'tag-always' }, { label: 'MCP', cls: 'tag-mcp' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/settings',
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/hooks',
     kiroEquiv: '.kiro/hooks/*.json + .kiro/settings/mcp.json',
     what: 'The control center for Claude Code. Sets permissions (what bash commands are allowed/denied), hooks (scripts that run before/after tool calls), and MCP server connections.',
     when: 'Add it once you want to automate things (auto-lint on save, auto-test after edits) or restrict dangerous commands (rm -rf, force push). Required if you use MCP servers.',
     why: 'Hooks turn Claude into a proactive coding partner — it can lint your code the moment it edits a file, log commands, or block risky operations entirely.',
     insights: [
-      { icon: '🔒', title: 'Permissions', text: 'The allow/deny lists control which bash commands Claude can run without asking you first. Use patterns like "Bash(npm run *)" to allow entire command families.' },
-      { icon: '⚡', title: 'PostToolUse Hooks', text: 'These fire after Claude uses a tool (Edit, Write, Bash, etc.). Perfect for auto-linting after edits, running tests after changes, or logging activity.' },
-      { icon: '🛡️', title: 'PreToolUse Hooks', text: 'Fire before a tool runs. Use to validate, log, or block operations. Return a non-zero exit code to cancel the tool call.' },
-      { icon: '🔌', title: 'MCP Servers', text: 'Connect Claude to external tools — databases, GitHub, Slack, custom APIs. Each server in mcpServers becomes a new set of tools Claude can use.' }
+      { icon: '🔒', title: 'Permissions', text: 'The allow/deny lists control which bash commands Claude can run without asking. Use patterns like "Bash(npm run *)" to allow entire command families. Deny blocks dangerous ones like rm -rf.' },
+      { icon: '⚡', title: 'PostToolUse + PreToolUse', text: 'PostToolUse fires after Claude uses a tool — perfect for auto-lint on edit, auto-test after changes. PreToolUse fires before — use to validate, log, or block with a non-zero exit code.' },
+      { icon: '🔔', title: 'SessionStart + SessionEnd + Notification', text: 'SessionStart loads content at launch (e.g. fetch today\'s tasks). SessionEnd saves session summaries. Notification fires when Claude sends a notification — use for Slack/webhook alerts.' },
+      { icon: '🌍', title: 'env Block', text: 'Set environment variables for every session: MAX_THINKING_TOKENS controls Claude\'s thinking budget. CLAUDE_AUTOCOMPACT_PCT_OVERRIDE sets the auto-compact trigger (e.g. 50 = compact at 50% context).' }
     ],
     template: `{
   "permissions": {
@@ -926,14 +954,41 @@ npm run lint   # Lint + format
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Session started at' $(date) >> .claude/sessions.log 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Session ended at' $(date) >> .claude/sessions.log 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[notification] $CLAUDE_NOTIFICATION_MESSAGE' >> .claude/notifications.log 2>/dev/null || true"
+          }
+        ]
+      }
     ]
   },
-  "mcpServers": {
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
-      "env": {}
-    }
+  "env": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80",
+    "MAX_THINKING_TOKENS": "10000"
   }
 }`
   },
@@ -942,7 +997,7 @@ npm run lint   # Lint + format
     name: 'commit.md',
     path: '.claude/commands/commit.md',
     tags: [{ label: '/commit', cls: 'tag-cmd' }, { label: 'Slash Command', cls: 'tag-cmd' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands',
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#getting-started',
     kiroEquiv: '.kiro/skills/[skill-name]/SKILL.md',
     what: 'A custom slash command. Type /commit in Claude Code and it runs this prompt automatically. Each .md file in .claude/commands/ becomes a /[filename] command.',
     when: 'Create commands for any task you repeat often: committing, reviewing, debugging, writing tests. Commands keep you consistent and save re-typing.',
@@ -971,7 +1026,7 @@ Review all changes and create a well-formatted git commit.
     name: 'review.md',
     path: '.claude/commands/review.md',
     tags: [{ label: '/review', cls: 'tag-cmd' }, { label: 'Slash Command', cls: 'tag-cmd' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands',
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#getting-started',
     kiroEquiv: '.kiro/skills/[skill-name]/SKILL.md',
     what: 'A /review slash command that instructs Claude to review code for bugs, security issues, and quality problems. Pass a file path as argument: /review src/auth.ts',
     when: 'Before merging a PR, after writing new code, when you want a second set of eyes on a critical path.',
@@ -1004,7 +1059,7 @@ Be direct. Skip praise. Flag only real problems.`
     name: 'debug.md',
     path: '.claude/commands/debug.md',
     tags: [{ label: '/debug', cls: 'tag-cmd' }, { label: 'Slash Command', cls: 'tag-cmd' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands',
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#getting-started',
     kiroEquiv: '.kiro/skills/[skill-name]/SKILL.md',
     what: 'A /debug slash command that guides Claude through systematic bug diagnosis — reproduce, locate, hypothesize, verify, fix, confirm, clean up.',
     when: 'When you have an error you can\'t quickly figure out. Describe the bug as $ARGUMENTS: /debug "TypeError: Cannot read properties of undefined at auth.ts:42"',
@@ -1036,7 +1091,7 @@ Do not guess. Do not fix without understanding the cause first.`
     name: 'test.md',
     path: '.claude/commands/test.md',
     tags: [{ label: '/test', cls: 'tag-cmd' }, { label: 'Slash Command', cls: 'tag-cmd' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands',
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#getting-started',
     kiroEquiv: '.kiro/skills/[skill-name]/SKILL.md',
     what: 'A /test slash command that instructs Claude to write thorough tests for a given file or feature — matching your project\'s existing test patterns.',
     when: 'After implementing a feature, before marking a task done, or when coverage is missing on critical paths.',
@@ -1071,7 +1126,7 @@ Rules:
     name: 'spec.md',
     path: '.claude/commands/spec.md',
     tags: [{ label: '/spec', cls: 'tag-cmd' }, { label: 'Slash Command', cls: 'tag-cmd' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands',
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#pass-arguments-to-skills',
     kiroEquiv: '.kiro/specs/ (requirements + design + tasks)',
     what: 'A /spec command that generates a 3-file feature spec before any code is written: requirements.md, design.md, and tasks.md.',
     when: 'Before starting any non-trivial feature. Forces upfront thinking about what, why, and how — preventing mid-build pivots.',
@@ -1113,7 +1168,7 @@ Do not start building until the spec is reviewed and approved.`
     name: 'requirements.md',
     path: 'specs/example-feature/requirements.md',
     tags: [{ label: 'Spec', cls: 'tag-spec' }, { label: 'What & Why', cls: 'tag-spec' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/overview',
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#configure-skills',
     kiroEquiv: '.kiro/specs/[feature]/requirements.md',
     what: 'Documents what a feature should do and why — written before any code. Contains user stories, acceptance criteria, and explicit non-goals.',
     when: 'Before starting any non-trivial feature. Especially useful in agent/vibe-coding sessions where scope creep is common.',
@@ -1148,7 +1203,7 @@ Do not start building until the spec is reviewed and approved.`
     name: 'design.md',
     path: 'specs/example-feature/design.md',
     tags: [{ label: 'Spec', cls: 'tag-spec' }, { label: 'How', cls: 'tag-spec' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/overview',
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#configure-skills',
     kiroEquiv: '.kiro/specs/[feature]/design.md',
     what: 'The technical design for a feature — data model changes, API contracts, component structure, and key architectural decisions.',
     when: 'After requirements are approved, before tasks are written. Let Claude help fill this in — it\'s good at generating designs from requirements.',
@@ -1194,7 +1249,7 @@ src/
     name: 'tasks.md',
     path: 'specs/example-feature/tasks.md',
     tags: [{ label: 'Spec', cls: 'tag-spec' }, { label: 'Build Plan', cls: 'tag-spec' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/overview',
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#configure-skills',
     kiroEquiv: '.kiro/specs/[feature]/tasks.md',
     what: 'A step-by-step ordered build plan. Each checkbox is one Claude session\'s worth of work, with a clear done state.',
     when: 'After design is approved. Share this with Claude at the start of each coding session: "Work through tasks.md, one task at a time."',
@@ -1230,7 +1285,7 @@ src/
     name: 'SKILL.md',
     path: 'skills/pr-review/SKILL.md',
     tags: [{ label: 'Skill', cls: 'tag-cmd' }, { label: 'Multi-file', cls: 'tag-hook' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands',
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#frontmatter-reference',
     kiroEquiv: '.kiro/skills/[name]/SKILL.md',
     what: 'The instruction file for a complex, multi-file skill. Like a command, but with a folder of supporting scripts and reference docs Claude can use during execution.',
     when: 'When a task is too complex for a single command file — it needs to run scripts, consult domain knowledge, or follow a multi-step workflow with real tooling.',
@@ -1276,7 +1331,7 @@ Review the PR or changed files for production readiness.
     name: 'quality-check.sh',
     path: 'skills/pr-review/scripts/quality-check.sh',
     tags: [{ label: 'Skill Script', cls: 'tag-hook' }, { label: 'Executable', cls: 'tag-hook' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands',
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#types-of-skill-content',
     kiroEquiv: '.kiro/skills/[name]/scripts/*.sh',
     what: 'A shell script that Claude runs as part of the skill. Automates mechanical checks (lint, tests, types) so Claude\'s review can focus on logic and judgment.',
     when: 'Any time your skill needs to run real commands and use the output. Scripts turn Claude from a reader into an executor.',
@@ -1318,7 +1373,7 @@ echo "✅ $PASS passed   ⚠️  $FAIL failed"
     name: 'review-patterns.md',
     path: 'skills/pr-review/references/review-patterns.md',
     tags: [{ label: 'Skill Reference', cls: 'tag-spec' }, { label: 'Domain Knowledge', cls: 'tag-always' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory',
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#types-of-skill-content',
     kiroEquiv: '.kiro/skills/[name]/references/*.md',
     what: 'A reference doc Claude loads as domain knowledge during the skill. Contains your team\'s specific standards, checklists, and conventions — not generic advice.',
     when: 'Any time your skill needs to apply project-specific standards. Put your actual rules here, not in the SKILL.md prompt.',
@@ -1370,7 +1425,7 @@ echo "✅ $PASS passed   ⚠️  $FAIL failed"
     name: 'MEMORY.md',
     path: '~/.claude/projects/[project]/memory/MEMORY.md',
     tags: [{ label: 'Auto Memory', cls: 'tag-hook' }, { label: 'Persists Sessions', cls: 'tag-always' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory',
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory#storage-location',
     kiroEquiv: 'No direct Kiro equivalent — Claude-specific feature',
     what: 'Claude\'s persistent memory file. Claude automatically reads and updates this across sessions to remember patterns, decisions, and lessons learned on your project.',
     when: 'Claude manages this automatically when auto-memory is enabled. You can also manually add entries: "Remember that we always use bun, not npm."',
@@ -1407,11 +1462,235 @@ echo "✅ $PASS passed   ⚠️  $FAIL failed"
 - Always use TypeScript strict mode`
   },
 
+  'settings-local-json': {
+    name: 'settings.local.json',
+    path: '.claude/settings.local.json',
+    tags: [{ label: 'Personal', cls: 'tag-hook' }, { label: 'Not Committed', cls: 'tag-spec' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/settings#available-scopes',
+    kiroEquiv: 'No direct Kiro equivalent',
+    what: 'Your personal, uncommitted override for settings.json. Claude Code automatically gitignores this file when created. Use it for local experiments, personal env vars, and dev-only settings that should never be shared with the team.',
+    when: 'When you want to override a team setting just for yourself — e.g., tuning auto-compact threshold, enabling a debug hook locally, or using a personal API key for an MCP server.',
+    why: 'Cleanly separates personal config from team config. settings.json is committed and shared; settings.local.json is yours alone. No more "don\'t commit this" comments.',
+    insights: [
+      { icon: '🙈', title: 'Auto-Gitignored', text: 'Claude Code automatically configures git to ignore this file when it\'s created. Your personal settings can never accidentally be committed.' },
+      { icon: '🔼', title: 'Highest Local Priority', text: 'settings.local.json takes precedence over settings.json in the settings hierarchy. Override any team setting without touching the shared file.' },
+      { icon: '🧪', title: 'Safe for Experiments', text: 'Try new hooks, different MCP configs, or relaxed permissions locally. Your teammates are unaffected.' },
+      { icon: '⚙️', title: 'Same Format', text: 'Identical JSON structure to settings.json. Supports permissions, hooks, env vars, and MCP servers — any valid settings.json field works here.' }
+    ],
+    template: `{
+  "permissions": {
+    "allow": [
+      "Bash(bun run *)"
+    ]
+  },
+  "env": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "MAX_THINKING_TOKENS": "10000"
+  }
+}`
+  },
+
+  'mcp-json': {
+    name: '.mcp.json',
+    path: '.mcp.json',
+    tags: [{ label: 'MCP', cls: 'tag-mcp' }, { label: 'Project Root', cls: 'tag-spec' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/mcp#project-scope',
+    kiroEquiv: '.kiro/settings/mcp.json',
+    what: 'The official project-scope MCP server configuration file. Lives at your project root and is checked into version control, letting your whole team share the same MCP server setup without repeating config in settings.json.',
+    when: 'When your project uses MCP servers that all team members need — GitHub for PRs, PostgreSQL for direct queries, Playwright for browser automation. Commit it so everyone gets the same tools.',
+    why: 'Separates team MCP config from personal settings. Supports ${ENV_VAR} expansion so secrets stay out of the file. Claude prompts for approval before using project-scoped servers for security.',
+    insights: [
+      { icon: '🔌', title: 'Team-Shared MCP', text: 'Designed to be committed and shared. Unlike mcpServers in settings.json (which can be personal), .mcp.json is the official team MCP config.' },
+      { icon: '🔒', title: 'Env Var Expansion', text: 'Use ${VAR_NAME} for secrets. The token never goes in the file — it lives in your .env.local (gitignored). Supports ${VAR:-default} syntax too.' },
+      { icon: '✅', title: 'Security Prompt', text: 'Claude Code asks users to approve project-scoped MCP servers before using them. Prevents malicious repos from silently hijacking your tools.' },
+      { icon: '📦', title: 'Popular Servers', text: 'GitHub (PRs/issues/repos), PostgreSQL (direct DB queries), Playwright (browser automation), Filesystem (scoped file access), Slack (notifications).' }
+    ],
+    template: `{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-github"],
+      "env": {
+        "GITHUB_TOKEN": "\${GITHUB_TOKEN}"
+      }
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-postgres"],
+      "env": {
+        "DATABASE_URL": "\${DATABASE_URL}"
+      }
+    }
+  }
+}`
+  },
+
+  'rules-frontend': {
+    name: 'frontend.md',
+    path: '.claude/rules/frontend.md',
+    tags: [{ label: 'Rule', cls: 'tag-always' }, { label: 'Glob Scoped', cls: 'tag-hook' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory#organize-rules-with-clauderules',
+    kiroEquiv: '.kiro/steering/*.md (conditional)',
+    what: 'A scoped rule file that Claude loads ONLY when working with frontend files matching src/**/*.tsx. Uses a paths: frontmatter key (not glob:). Claude never loads this when editing backend or test files — zero token waste.',
+    when: 'When your frontend has specific conventions: Tailwind only, functional components, aria-labels, etc. Split CLAUDE.md into rules/ when it grows beyond ~100 lines.',
+    why: 'Token efficiency. Editing Button.tsx? Claude only sees frontend rules. Backend and testing rules stay out of context. Each file stays small and targeted.',
+    insights: [
+      { icon: '🎯', title: 'paths: Is the Key', text: 'The official frontmatter key is "paths:" (not "glob:"). Claude loads this file only when it reads or edits a matching file during the session.' },
+      { icon: '⚡', title: 'Token Savings', text: 'Working on Button.tsx → only frontend.md loads. Working on users.ts → only backend.md loads. Fewer wasted tokens, more focused responses.' },
+      { icon: '📏', title: 'Keep It Short', text: 'The ideal rule file is 10-20 lines. If it grows, split by concern: styling.md, state.md, a11y.md. Small files = targeted context.' },
+      { icon: '🔄', title: 'Official Overflow Mechanism', text: 'This is the officially documented way to handle a CLAUDE.md that\'s getting too large. Start splitting when it exceeds ~100 lines.' }
+    ],
+    template: `---
+paths:
+  - "src/**/*.tsx"
+  - "src/**/*.jsx"
+---
+
+## Frontend Rules
+
+- Use Tailwind for all styling — no inline styles, no CSS modules
+- Components must be functional — no class components
+- Always add aria-labels to interactive elements
+- Use React Query for server state, Zustand for client state
+- File naming: PascalCase for components, camelCase for hooks
+- Export components as named exports, not default exports`
+  },
+
+  'rules-backend': {
+    name: 'backend.md',
+    path: '.claude/rules/backend.md',
+    tags: [{ label: 'Rule', cls: 'tag-always' }, { label: 'Glob Scoped', cls: 'tag-hook' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory#path-specific-rules',
+    kiroEquiv: '.kiro/steering/*.md (conditional)',
+    what: 'A scoped rule file that loads only when Claude touches backend API files (api/**/*.ts). Contains backend-specific conventions: Zod validation, async patterns, error logging, auth enforcement.',
+    when: 'When your backend has different rules from your frontend — which it almost always does. SQL patterns, error handling, auth middleware belong here, not mixed into CLAUDE.md.',
+    why: 'Your backend uses Zod + async/await + logger.error(). Your frontend uses React + Tailwind. These conventions should never mix. Scoped rules keep each layer\'s context clean.',
+    insights: [
+      { icon: '🛡️', title: 'Backend-Specific Rules', text: 'SQL validation, error logging patterns, async conventions, auth middleware — rules that are irrelevant and confusing for a React component file.' },
+      { icon: '📂', title: 'Adapt paths: to Your Structure', text: '"api/**/*.ts" targets Express routes. "src/server/**/*.ts" targets server-side Next.js. Match your actual directory layout.' },
+      { icon: '🔗', title: 'Layers on Top of CLAUDE.md', text: 'CLAUDE.md always loads first (project-wide context). backend.md adds on top when relevant. Both are active simultaneously.' },
+      { icon: '🔒', title: 'Security-Critical Patterns', text: 'Ideal place to enforce: always validate with Zod, always parameterize SQL, always check auth before returning data.' }
+    ],
+    template: `---
+paths:
+  - "api/**/*.ts"
+  - "src/server/**/*.ts"
+  - "src/api/**/*.ts"
+---
+
+## Backend / API Rules
+
+- Always validate request body with Zod before using any input
+- Use async/await — never raw .then() chains
+- Log errors with logger.error(), not console.log()
+- All endpoints must verify authentication before returning data
+- Return consistent error shape: { error: string, code: string }
+- Use parameterized queries — never concatenate SQL strings`
+  },
+
+  'rules-testing': {
+    name: 'testing.md',
+    path: '.claude/rules/testing.md',
+    tags: [{ label: 'Rule', cls: 'tag-always' }, { label: 'Glob Scoped', cls: 'tag-hook' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory#path-specific-rules',
+    kiroEquiv: '.kiro/steering/*.md (conditional)',
+    what: 'A scoped rule file loaded only when Claude works with test files (**/*.test.ts, **/*.spec.ts). Enforces testing conventions: describe/it structure, mock patterns, arrange-act-assert, one-assertion-per-test.',
+    when: 'When you have specific testing standards. Prevents Claude from writing tests in the wrong style, using the wrong framework, or calling real APIs in tests.',
+    why: 'Test files have completely different conventions from production code. A separate rule file prevents cross-contamination — your frontend rules don\'t bleed into test structure.',
+    insights: [
+      { icon: '🧪', title: 'Test-Only Context', text: 'describe/it blocks, beforeEach, jest.mock — these belong here, not in your frontend or backend rules. Tests are a different code domain.' },
+      { icon: '🎭', title: 'Enforce Mock Patterns', text: 'Document your mock conventions explicitly. "Mock external APIs, never call real ones in tests" prevents flaky tests and slow CI pipelines.' },
+      { icon: '📋', title: 'Arrange-Act-Assert', text: 'Enforce AAA structure explicitly. Claude will structure every test with clear setup, action, and assertion phases.' },
+      { icon: '🔍', title: '**/*.test.ts Matches Everywhere', text: 'The double-star pattern matches test files in any directory. Add **/*.spec.ts if you use that naming convention too.' }
+    ],
+    template: `---
+paths:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.spec.ts"
+---
+
+## Testing Rules
+
+- Use describe/it blocks — not the test() function directly
+- Follow Arrange-Act-Assert structure in every test
+- Mock external APIs and databases — never call real ones
+- Each test tests ONE thing — split multi-assertion tests
+- Test names read like documentation: "returns 404 when user not found"
+- Use beforeEach for setup, afterEach for cleanup
+- Never delete a test to make a PR pass — fix the underlying issue`
+  },
+
+  'agent-md': {
+    name: 'code-reviewer.md',
+    path: '.claude/agents/code-reviewer.md',
+    tags: [{ label: 'Subagent', cls: 'tag-mcp' }, { label: 'Isolated', cls: 'tag-hook' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/sub-agents#write-subagent-files',
+    kiroEquiv: 'No direct Kiro equivalent',
+    what: 'A subagent definition file. Claude spawns this as an isolated worker with its own tools, model, and instructions. Agents run with a separate context window — they don\'t share or pollute the main session.',
+    when: 'For specialized tasks that benefit from isolation and parallelism: code review, security audits, documentation generation. The agent focuses deeply while the main session continues.',
+    why: 'Subagents let Claude run specialized workers in parallel. A code-reviewer agent can audit your PR while the main Claude continues building the next feature — no context pollution.',
+    insights: [
+      { icon: '📄', title: 'Markdown + YAML Frontmatter', text: 'Agent files are .md with YAML frontmatter (name, description, tools, model). The body is the agent\'s system prompt. Extension is .md — NOT .yml.' },
+      { icon: '⚙️', title: 'Scope Tools Carefully', text: 'Limit tools via the tools: field. A code-reviewer only needs Read, Glob, Grep — not Write or Bash. Least-privilege by design.' },
+      { icon: '🗂️', title: 'Two Locations', text: '.claude/agents/ = project-scoped (committed, team-shared). ~/.claude/agents/ = global (your personal agents across all projects).' },
+      { icon: '🔒', title: 'Isolated Context Window', text: 'Each agent gets its own full context window. Deep analysis in the agent won\'t consume the main session\'s context budget.' }
+    ],
+    template: `---
+name: code-reviewer
+description: Reviews code for quality, security, and best practices. Activated when asked to review code or a pull request.
+tools: Read, Glob, Grep
+model: claude-sonnet-4-5
+---
+
+You are a thorough code reviewer focused on production readiness.
+
+When invoked:
+1. Read the target files or diff provided
+2. Check for security issues (injection, auth bypass, exposed secrets)
+3. Check for performance issues (N+1 queries, blocking calls, memory leaks)
+4. Check for correctness (null handling, race conditions, edge cases)
+5. Check for code quality (single responsibility, named constants, no dead code)
+
+Output format:
+\`file:line → [🔴 blocker | 🟡 warning | 🟢 suggestion] → issue → fix\`
+
+Skip praise. Only actionable findings. Group by file, ordered by severity.`
+  },
+
+  'plugin-json': {
+    name: 'plugin.json',
+    path: 'plugins/my-plugin/.claude-plugin/plugin.json',
+    tags: [{ label: 'Plugin', cls: 'tag-mcp' }, { label: 'Distributable', cls: 'tag-spec' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/plugins#create-the-plugin-manifest',
+    kiroEquiv: 'No direct Kiro equivalent',
+    what: 'The manifest for a Claude Code plugin — a bundled, shareable package of skills, agents, hooks, and MCP servers. Install plugins from GitHub, npm, or git URLs. The official way to share Claude Code extensions.',
+    when: 'When you want to share your skills/agents across projects or with the community. Instead of copying skeleton files everywhere, package them as a plugin and install with one command.',
+    why: 'Plugins are the distribution layer for Claude Code. Instead of managing file copies across projects, a plugin is versioned, installable, and updatable — like an npm package for Claude extensions.',
+    insights: [
+      { icon: '📦', title: 'Bundles Everything', text: 'One plugin can include skills, agents, hooks, AND MCP servers. Install once, get the complete capability set for your use case.' },
+      { icon: '🚀', title: 'Install Command', text: 'Install via /plugin install github:yourname/yourplugin or from npm packages. Claude Code handles versioning and updates.' },
+      { icon: '🏗️', title: 'Plugin Structure', text: 'plugins/my-plugin/ must contain .claude-plugin/plugin.json (the manifest). Optionally add skills/, agents/, hooks/, .mcp.json alongside it.' },
+      { icon: '✅', title: 'Activate in settings.json', text: 'Add "enabledPlugins": ["./plugins/my-plugin"] to your settings.json. Or test locally with: claude --plugin-dir ./plugins/my-plugin' }
+    ],
+    template: `{
+  "name": "my-plugin",
+  "version": "1.0.0",
+  "description": "A curated set of skills and agents for [your use case]",
+  "skills": [
+    "skills/pr-review"
+  ],
+  "agents": [
+    "agents/code-reviewer.md"
+  ]
+}`
+  },
+
   'global-claude-md': {
     name: 'CLAUDE.md (global)',
     path: '~/.claude/CLAUDE.md',
     tags: [{ label: 'Global', cls: 'tag-hook' }, { label: 'Always Loaded', cls: 'tag-always' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory',
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory#choose-where-to-put-claude-md-files',
     kiroEquiv: 'No direct Kiro equivalent',
     what: 'A personal global CLAUDE.md at ~/.claude/CLAUDE.md. Loaded in EVERY project, everywhere — your personal Claude defaults and preferences.',
     when: 'Set it once. Put things that apply to all your projects: communication preferences, global tools you always use, personal coding standards.',
@@ -1456,10 +1735,20 @@ const TREE = [
     id: 'root-project', label: 'your-project/', icon: '📁', type: 'folder', open: true,
     children: [
       { id: 'claude-md', label: 'CLAUDE.md', icon: '📄', badge: 'ALWAYS', badgeCls: 'badge-always' },
+      { id: 'mcp-json', label: '.mcp.json', icon: '📄', badge: 'MCP', badgeCls: 'badge-mcp' },
       {
         id: 'claude-dir', label: '.claude/', icon: '⚙️', type: 'folder', open: true,
         children: [
-          { id: 'settings-json', label: 'settings.json', icon: '📄', badge: 'HOOKS+MCP', badgeCls: 'badge-hook' },
+          { id: 'settings-json',       label: 'settings.json',       icon: '📄', badge: 'HOOKS', badgeCls: 'badge-hook' },
+          { id: 'settings-local-json', label: 'settings.local.json', icon: '📄', badge: 'LOCAL', badgeCls: 'badge-hook' },
+          {
+            id: 'rules-dir', label: 'rules/', icon: '📏', type: 'folder', open: true,
+            children: [
+              { id: 'rules-frontend', label: 'frontend.md', icon: '📄', badge: 'RULE', badgeCls: 'badge-always' },
+              { id: 'rules-backend',  label: 'backend.md',  icon: '📄', badge: 'RULE', badgeCls: 'badge-always' },
+              { id: 'rules-testing',  label: 'testing.md',  icon: '📄', badge: 'RULE', badgeCls: 'badge-always' },
+            ]
+          },
           {
             id: 'commands-dir', label: 'commands/', icon: '💬', type: 'folder', open: true,
             children: [
@@ -1468,6 +1757,12 @@ const TREE = [
               { id: 'cmd-debug',  label: 'debug.md',  icon: '📄', badge: '/cmd', badgeCls: 'badge-cmd' },
               { id: 'cmd-test',   label: 'test.md',   icon: '📄', badge: '/cmd', badgeCls: 'badge-cmd' },
               { id: 'cmd-spec',   label: 'spec.md',   icon: '📄', badge: '/cmd', badgeCls: 'badge-cmd' },
+            ]
+          },
+          {
+            id: 'agents-dir', label: 'agents/', icon: '🤖', type: 'folder', open: true,
+            children: [
+              { id: 'agent-md', label: 'code-reviewer.md', icon: '📄', badge: 'AGENT', badgeCls: 'badge-mcp' },
             ]
           },
           { id: 'memory-md', label: 'memory/MEMORY.md', icon: '🧠', badge: 'AUTO', badgeCls: 'badge-always' },
@@ -1495,6 +1790,17 @@ const TREE = [
               { id: 'skill-md',     label: 'SKILL.md',             icon: '📄', badge: 'SKILL', badgeCls: 'badge-cmd' },
               { id: 'skill-script', label: 'scripts/quality-check.sh', icon: '📄', badge: 'RUN', badgeCls: 'badge-hook' },
               { id: 'skill-ref',    label: 'references/review-patterns.md', icon: '📄', badge: 'REF', badgeCls: 'badge-always' },
+            ]
+          }
+        ]
+      },
+      {
+        id: 'plugins-dir', label: 'plugins/', icon: '🔌', type: 'folder', open: false,
+        children: [
+          {
+            id: 'plugin-dir', label: 'my-plugin/', icon: '📁', type: 'folder', open: true,
+            children: [
+              { id: 'plugin-json', label: '.claude-plugin/plugin.json', icon: '📄', badge: 'PLUGIN', badgeCls: 'badge-mcp' },
             ]
           }
         ]
@@ -1903,9 +2209,140 @@ bun run lint   # Lint + format
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Session started at' $(date) >> .claude/sessions.log 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Session ended at' $(date) >> .claude/sessions.log 2>/dev/null || true"
+          }
+        ]
+      }
     ]
   },
-  "mcpServers": {}
+  "env": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80",
+    "MAX_THINKING_TOKENS": "10000"
+  }
+}
+`);
+
+    // .claude/settings.local.json
+    zip.file('.claude/settings.local.json', `{
+  "_comment": "This file is gitignored — personal overrides only",
+  "env": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50"
+  }
+}
+`);
+
+    // .mcp.json (project-root, team-shared MCP config)
+    zip.file('.mcp.json', `{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-github"],
+      "env": {
+        "GITHUB_TOKEN": "\${GITHUB_TOKEN}"
+      }
+    }
+  }
+}
+`);
+
+    // .claude/rules/
+    zip.file('.claude/rules/frontend.md', `---
+paths:
+  - "src/**/*.tsx"
+  - "src/**/*.jsx"
+---
+
+## Frontend Rules
+
+- Use Tailwind for all styling — no inline styles, no CSS modules
+- Components must be functional — no class components
+- Always add aria-labels to interactive elements
+- File naming: PascalCase for components, camelCase for hooks
+- Export components as named exports, not default exports
+`);
+    zip.file('.claude/rules/backend.md', `---
+paths:
+  - "api/**/*.ts"
+  - "src/server/**/*.ts"
+  - "src/api/**/*.ts"
+---
+
+## Backend / API Rules
+
+- Always validate request body with Zod before using any input
+- Use async/await — never raw .then() chains
+- Log errors with logger.error(), not console.log()
+- All endpoints must verify authentication before returning data
+- Return consistent error shape: { error: string, code: string }
+- Use parameterized queries — never concatenate SQL strings
+`);
+    zip.file('.claude/rules/testing.md', `---
+paths:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.spec.ts"
+---
+
+## Testing Rules
+
+- Use describe/it blocks — not the test() function directly
+- Follow Arrange-Act-Assert structure in every test
+- Mock external APIs and databases — never call real ones
+- Each test tests ONE thing — split multi-assertion tests
+- Test names read like documentation: "returns 404 when user not found"
+- Never delete a test to make a PR pass — fix the underlying issue
+`);
+
+    // .claude/agents/
+    zip.file('.claude/agents/code-reviewer.md', `---
+name: code-reviewer
+description: Reviews code for quality, security, and best practices. Activated when asked to review code or a pull request.
+tools: Read, Glob, Grep
+model: claude-sonnet-4-5
+---
+
+You are a thorough code reviewer focused on production readiness.
+
+When invoked:
+1. Read the target files or diff provided
+2. Check for security issues (injection, auth bypass, exposed secrets)
+3. Check for performance issues (N+1 queries, blocking calls, memory leaks)
+4. Check for correctness (null handling, race conditions, edge cases)
+5. Check for code quality (single responsibility, named constants, no dead code)
+
+Output format:
+\`file:line → [🔴 blocker | 🟡 warning | 🟢 suggestion] → issue → fix\`
+
+Skip praise. Only actionable findings. Group by file, ordered by severity.
+`);
+
+    // plugins/my-plugin/
+    zip.file('plugins/my-plugin/.claude-plugin/plugin.json', `{
+  "name": "my-plugin",
+  "version": "1.0.0",
+  "description": "A curated set of skills and agents for [your use case]",
+  "skills": [
+    "skills/pr-review"
+  ],
+  "agents": [
+    "agents/code-reviewer.md"
+  ]
 }
 `);
 
