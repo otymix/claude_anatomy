@@ -1024,10 +1024,12 @@ const FILES = {
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory#claude-md-files',
     what: 'The single most important file. Claude reads it automatically at the start of every session — no prompt needed. Think of it as the steering wheel for your whole project.',
     when: 'Every project should have one. Create it before your first Claude session. Update it whenever your stack, conventions, or key constraints change.',
-    why: 'Without CLAUDE.md, Claude knows nothing about your project context. With it, every response is tailored — correct tech stack, right conventions, aware of constraints.',
+    why: 'Without CLAUDE.md, Claude starts every session from scratch — no stack, no rules, no conventions. It can still read your files, but it has no persistent project memory. CLAUDE.md is what survives between sessions.',
     insights: [
-      { icon: '🧠', title: 'Always in Context', text: 'Claude loads CLAUDE.md before every conversation. It\'s never "forgotten" mid-session. Keep it concise — every line costs tokens.' },
+      { icon: '🧠', title: 'Always in Context', text: 'Claude loads CLAUDE.md before every conversation. It\'s never "forgotten" mid-session. Every line is reprocessed on each message — dead weight is expensive.' },
       { icon: '🎯', title: 'What to Put In It', text: 'Project overview, tech stack, common commands, code conventions, key constraints (things Claude MUST NOT do), and current focus.' },
+      { icon: '✂️', title: 'Keep It Short', text: 'No official line limit, but community consensus is ~100–200 lines max. For each line ask: "Would removing this cause Claude to make mistakes?" If not, cut it. Bloated CLAUDE.md files cause Claude to silently ignore your rules.' },
+      { icon: '📎', title: '@import Hack', text: 'Use @path/to/file syntax to split context across files without bloating the main file. Example: "- Git workflow: @docs/git.md". Claude loads the imported file on demand. Combine with rules/ for per-filetype context that only loads when relevant.' },
       { icon: '⚡', title: 'Hierarchical', text: 'You can have a global ~/.claude/CLAUDE.md for personal defaults, and a per-project CLAUDE.md that adds project-specific context. Both are loaded.' },
       { icon: '🔄', title: 'Keep It Fresh', text: 'Treat CLAUDE.md like living documentation. If Claude makes the same mistake twice, the fix belongs in CLAUDE.md, not in a repeated prompt.' }
     ],
