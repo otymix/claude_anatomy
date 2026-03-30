@@ -101,6 +101,46 @@
     }
     .btn-accent:hover { background: linear-gradient(135deg, #b45309, #f59e0b); }
 
+    /* ── Overflow menu ── */
+    .btn-more { padding: 8px 12px; position: relative; }
+    .overflow-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      min-width: 180px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      z-index: 100;
+      overflow: hidden;
+    }
+    .overflow-menu.open { display: block; }
+    .overflow-menu a,
+    .overflow-menu button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: left;
+      transition: background 0.1s;
+    }
+    .overflow-menu a:hover,
+    .overflow-menu button:hover { background: var(--border); }
+    .overflow-menu .menu-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0;
+    }
+
     /* ── Subheader ── */
     .subheader {
       background: var(--bg);
@@ -729,8 +769,14 @@
   <div class="header-actions">
     <button class="btn btn-qr" id="qr-btn" onclick="toggleQuickRef()">⌨️ Quick Reference</button>
     <button class="btn btn-accent" onclick="openWizard()">✨ Generate CLAUDE.md</button>
-    <button class="btn" onclick="downloadSkeleton()">⬇️ Download Skeleton</button>
-    <a class="btn" href="https://docs.anthropic.com/en/docs/claude-code/overview" target="_blank">📖 Claude Docs</a>
+    <div style="position:relative;">
+      <button class="btn btn-more" id="more-btn" onclick="toggleOverflowMenu(event)" aria-label="More options">•••</button>
+      <div class="overflow-menu" id="overflow-menu">
+        <button onclick="downloadSkeleton();closeOverflowMenu()">⬇️ Download Skeleton</button>
+        <div class="menu-divider"></div>
+        <a href="https://docs.anthropic.com/en/docs/claude-code/overview" target="_blank" onclick="closeOverflowMenu()">📖 Claude Docs</a>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -2764,6 +2810,16 @@ document.addEventListener('keydown', e => {
   }
   if (e.key === 'Escape' && qrVisible) toggleQuickRef();
 });
+
+// ── Overflow menu ──────────────────────────────────────────────────────────
+function toggleOverflowMenu(e) {
+  e.stopPropagation();
+  document.getElementById('overflow-menu').classList.toggle('open');
+}
+function closeOverflowMenu() {
+  document.getElementById('overflow-menu').classList.remove('open');
+}
+document.addEventListener('click', () => closeOverflowMenu());
 
 // ── Init ───────────────────────────────────────────────────────────────────
 renderTree(TREE, document.getElementById('tree'));
