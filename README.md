@@ -4,7 +4,7 @@
 
 **[→ Open the Interactive Explorer](https://otymix.github.io/claude_anatomy/)**
 
-Built for Claude Code builders who want the same structured project skeleton that Kiro (AWS) provides — but for Claude.
+Built for Claude Code builders who want a structured, well-documented project skeleton to get the most out of Claude Code.
 
 ---
 
@@ -12,42 +12,35 @@ Built for Claude Code builders who want the same structured project skeleton tha
 
 ```
 your-project/
-  CLAUDE.md                        ← Always-loaded context (the most important file)
+  CLAUDE.md                          ← Always-loaded context (the most important file)
+  .mcp.json                          ← Team-shared MCP server config
   .claude/
-    settings.json                  ← Hooks + permissions + MCP server config
+    settings.json                    ← Hooks + permissions, committed
+    settings.local.json              ← Personal overrides, gitignored
+    rules/
+      frontend.md                    ← Loads only for src/**/*.tsx files
+      backend.md                     ← Loads only for api/**/*.ts files
+      testing.md                     ← Loads only for **/*.test.ts files
     commands/
-      commit.md    → /commit       ← Conventional commit workflow
-      review.md    → /review       ← Code review checklist
-      debug.md     → /debug        ← Systematic bug diagnosis
-      test.md      → /test         ← Write + run tests
-      spec.md      → /spec         ← Feature spec generator
-    memory/MEMORY.md               ← Auto-persisted project memory
-  skills/
-    pr-review/
-      SKILL.md                     ← Multi-step PR review workflow
-      scripts/quality-check.sh    ← Automated lint + test + typecheck
-      references/review-patterns.md ← Your team's standards (editable)
-  specs/
+      commit.md    → /commit         ← Conventional commit workflow
+      review.md    → /review         ← Code review checklist
+      debug.md     → /debug          ← Systematic bug diagnosis
+      test.md      → /test           ← Write + run tests
+      spec.md      → /spec           ← Feature spec generator
+    agents/
+      code-reviewer.md               ← Sub-agent with isolated context
+    skills/
+      pr-review/
+        SKILL.md                     ← Multi-step PR review workflow
+        scripts/quality-check.sh     ← Automated lint + test + typecheck
+        references/review-patterns.md ← Your team's standards (editable)
+    memory/MEMORY.md                 ← Auto-persisted project memory
+  specs/                             ← Community convention (not built-in)
     example-feature/
-      requirements.md              ← What & why (user stories, acceptance criteria)
-      design.md                    ← How (data model, API, components)
-      tasks.md                     ← Step-by-step build plan
+      requirements.md                ← What & why (user stories, acceptance criteria)
+      design.md                      ← How (data model, API, components)
+      tasks.md                       ← Step-by-step build plan
 ```
-
----
-
-## Kiro → Claude mapping
-
-| Kiro (AWS) | Claude Code |
-|---|---|
-| `.kiro/steering/*.md` (always) | `CLAUDE.md` |
-| `.kiro/steering/*.md` (auto) | Memory files / CLAUDE.md sections |
-| `.kiro/skills/*/SKILL.md` | `.claude/commands/*.md` (simple) |
-| `.kiro/skills/*/` with scripts | `skills/*/SKILL.md` + scripts/ + references/ |
-| `.kiro/hooks/*.json` | `.claude/settings.json` hooks |
-| `.kiro/settings/mcp.json` | `.claude/settings.json` mcpServers |
-| `.kiro/specs/[feature]/` | `specs/[feature]/` |
-| `AGENTS.md` | `CLAUDE.md` |
 
 ---
 
@@ -86,8 +79,7 @@ Everything else you add reactively: Claude makes the same mistake twice → fix 
 
 PRs welcome for:
 - New commands (`.claude/commands/`)
-- New skills (`skills/`)
-- Corrections to the Kiro mapping
+- New skills (`.claude/skills/`)
 - Real-world `CLAUDE.md` examples
 
 ---

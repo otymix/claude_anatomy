@@ -59,7 +59,10 @@
       font-size: 18px;
       font-weight: 700;
       color: var(--text);
+      cursor: pointer;
+      text-decoration: none;
     }
+    .logo:hover { opacity: 0.85; }
     .logo-icon {
       width: 32px; height: 32px;
       background: linear-gradient(135deg, #d97706, #f59e0b);
@@ -183,6 +186,132 @@
     .badge-cmd { background: rgba(88,166,255,0.2); color: var(--blue); }
     .badge-hook { background: rgba(249,115,22,0.2); color: #fb923c; }
     .badge-mcp { background: rgba(188,140,255,0.2); color: var(--purple); }
+    .badge-convention { background: rgba(139,148,158,0.2); color: #8b949e; }
+
+    /* ── Quick Reference panel ── */
+    .qr-panel {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    .qr-panel.active { display: flex; }
+    .qr-search-bar {
+      padding: 14px 20px 10px;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .qr-search-bar input {
+      flex: 1;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+    .qr-search-bar input:focus { border-color: var(--accent2); }
+    .qr-search-bar input::placeholder { color: var(--text2); }
+    .qr-hint { font-size: 11px; color: var(--text2); white-space: nowrap; }
+    .qr-grid {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 16px 20px 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 14px;
+      align-content: start;
+    }
+    .qr-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .qr-card.hidden { display: none; }
+    .qr-card-header {
+      padding: 9px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .qr-card-body { padding: 6px 0 8px; }
+    .qr-group {
+      padding: 4px 14px 2px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text2);
+      margin-top: 4px;
+    }
+    .qr-item {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding: 3px 14px;
+      border-radius: 4px;
+      cursor: default;
+      position: relative;
+    }
+    .qr-item:hover { background: var(--bg3); }
+    .qr-item.hidden { display: none; }
+    .qr-item-key {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .qr-item-desc {
+      font-size: 11px;
+      color: var(--text2);
+      line-height: 1.4;
+    }
+    .qr-new {
+      font-size: 9px;
+      font-weight: 700;
+      background: rgba(59,130,246,0.25);
+      color: #60a5fa;
+      padding: 1px 5px;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+    .qr-copy {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 10px;
+      color: var(--text2);
+      cursor: pointer;
+      transition: opacity 0.1s;
+    }
+    .qr-item:hover .qr-copy { opacity: 1; }
+    .qr-copy:hover { color: var(--text); border-color: var(--accent2); }
+    .qr-no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: var(--text2);
+      padding: 60px 20px;
+      font-size: 14px;
+    }
+    .btn-qr { border-color: rgba(217,119,6,0.4); color: var(--accent2); }
+    .btn-qr:hover, .btn-qr.active { background: rgba(217,119,6,0.15); border-color: var(--accent2); }
 
     /* ── Detail panel ── */
     .detail-panel {
@@ -398,22 +527,6 @@
     }
     .copy-feedback.show { opacity: 1; }
 
-    /* Kiro comparison badge */
-    .kiro-compare {
-      margin-top: 8px;
-      font-size: 11px;
-      color: var(--text2);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .kiro-compare code {
-      background: var(--bg3);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-family: monospace;
-      color: var(--text2);
-    }
 
     /* ── Wizard modal ── */
     .wizard-overlay {
@@ -608,12 +721,13 @@
 <body>
 
 <header>
-  <div class="logo">
+  <a class="logo" href="javascript:location.reload()">
     <div class="logo-icon"><svg width="28" height="28" viewBox="0 0 248 248" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M52.4285 162.873L98.7844 136.879L99.5485 134.602L98.7844 133.334H96.4921L88.7237 132.862L62.2346 132.153L39.3113 131.207L17.0249 130.026L11.4214 128.844L6.2 121.873L6.7094 118.447L11.4214 115.257L18.171 115.847L33.0711 116.911L55.485 118.447L71.6586 119.392L95.728 121.873H99.5485L100.058 120.337L98.7844 119.392L97.7656 118.447L74.5877 102.732L49.4995 86.1905L36.3823 76.62L29.3779 71.7757L25.8121 67.2858L24.2839 57.3608L30.6515 50.2716L39.3113 50.8623L41.4763 51.4531L50.2636 58.1879L68.9842 72.7209L93.4357 90.6804L97.0015 93.6343L98.4374 92.6652L98.6571 91.9801L97.0015 89.2625L83.757 65.2772L69.621 40.8192L63.2534 30.6579L61.5978 24.632C60.9565 22.1032 60.579 20.0111 60.579 17.4246L67.8381 7.49965L71.9133 6.19995L81.7193 7.49965L85.7946 11.0443L91.9074 24.9865L101.714 46.8451L116.996 76.62L121.453 85.4816L123.873 93.6343L124.764 96.1155H126.292V94.6976L127.566 77.9197L129.858 57.3608L132.15 30.8942L132.915 23.4505L136.608 14.4708L143.994 9.62643L149.725 12.344L154.437 19.0788L153.8 23.4505L150.998 41.6463L145.522 70.1215L141.957 89.2625H143.994L146.414 86.7813L156.093 74.0206L172.266 53.698L179.398 45.6635L187.803 36.802L193.152 32.5484H203.34L210.726 43.6549L207.415 55.1159L196.972 68.3492L188.312 79.5739L175.896 96.2095L168.191 109.585L168.882 110.689L170.738 110.53L198.755 104.504L213.91 101.787L231.994 98.7149L240.144 102.496L241.036 106.395L237.852 114.311L218.495 119.037L195.826 123.645L162.07 131.592L161.696 131.893L162.137 132.547L177.36 133.925L183.855 134.279H199.774L229.447 136.524L237.215 141.605L241.8 147.867L241.036 152.711L229.065 158.737L213.019 154.956L175.45 145.977L162.587 142.787H160.805V143.85L171.502 154.366L191.242 172.089L215.82 195.011L217.094 200.682L213.91 205.172L210.599 204.699L188.949 188.394L180.544 181.069L161.696 165.118H160.422V166.772L164.752 173.152L187.803 207.771L188.949 218.405L187.294 221.832L181.308 223.959L174.813 222.777L161.187 203.754L147.305 182.486L136.098 163.345L134.745 164.2L128.075 235.42L125.019 239.082L117.887 241.8L111.902 237.31L108.718 229.984L111.902 215.452L115.722 196.547L118.779 181.541L121.58 162.873L123.291 156.636L123.14 156.219L121.773 156.449L107.699 175.752L86.304 204.699L69.3663 222.777L65.291 224.431L58.2867 220.768L58.9235 214.27L62.8713 208.48L86.304 178.705L100.44 160.155L109.551 149.507L109.462 147.967L108.959 147.924L46.6977 188.512L35.6182 189.93L30.7788 185.44L31.4156 178.115L33.7079 175.752L52.4285 162.873Z" fill="#D97757"/></svg></div>
     Claude Anatomy
-  </div>
+  </a>
   <div class="header-sub">Click any file to learn what it does, when to use it, and see real templates.</div>
   <div class="header-actions">
+    <button class="btn btn-qr" id="qr-btn" onclick="toggleQuickRef()">⌨️ Quick Reference</button>
     <button class="btn btn-accent" onclick="openWizard()">✨ Generate CLAUDE.md</button>
     <button class="btn" onclick="downloadSkeleton()">⬇️ Download Skeleton</button>
     <a class="btn" href="https://docs.anthropic.com/en/docs/claude-code/overview" target="_blank">📖 Claude Docs</a>
@@ -625,7 +739,16 @@
   Works for vibe coding, agents, and skill building.
 </div>
 
-<div class="main">
+<!-- Quick Reference Panel -->
+<div class="qr-panel" id="qr-panel">
+  <div class="qr-search-bar">
+    <input id="qr-search" type="search" placeholder="Search shortcuts, commands, flags… (press ? to open)" oninput="filterQuickRef(this.value)" autocomplete="off" />
+    <span class="qr-hint">Press <kbd style="background:var(--bg3);border:1px solid var(--border);padding:1px 5px;border-radius:3px;font-size:10px">?</kbd> to toggle</span>
+  </div>
+  <div class="qr-grid" id="qr-grid"></div>
+</div>
+
+<div class="main" id="main-explorer">
   <!-- Tree -->
   <nav class="tree-panel">
     <ul class="tree" id="tree"></ul>
@@ -853,7 +976,6 @@ const FILES = {
     path: 'CLAUDE.md',
     tags: [{ label: 'Always Loaded', cls: 'tag-always' }, { label: 'Project Root', cls: 'tag-spec' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory#claude-md-files',
-    kiroEquiv: '.kiro/steering/*.md (inclusion: always)',
     what: 'The single most important file. Claude reads it automatically at the start of every session — no prompt needed. Think of it as the steering wheel for your whole project.',
     when: 'Every project should have one. Create it before your first Claude session. Update it whenever your stack, conventions, or key constraints change.',
     why: 'Without CLAUDE.md, Claude knows nothing about your project context. With it, every response is tailored — correct tech stack, right conventions, aware of constraints.',
@@ -907,7 +1029,6 @@ npm run lint   # Lint + format
     path: '.claude/settings.json',
     tags: [{ label: 'Hooks', cls: 'tag-hook' }, { label: 'Permissions', cls: 'tag-always' }, { label: 'MCP', cls: 'tag-mcp' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/hooks',
-    kiroEquiv: '.kiro/hooks/*.json + .kiro/settings/mcp.json',
     what: 'The control center for Claude Code. Sets permissions (what bash commands are allowed/denied), hooks (scripts that run before/after tool calls), and MCP server connections.',
     when: 'Add it once you want to automate things (auto-lint on save, auto-test after edits) or restrict dangerous commands (rm -rf, force push). Required if you use MCP servers.',
     why: 'Hooks turn Claude into a proactive coding partner — it can lint your code the moment it edits a file, log commands, or block risky operations entirely.',
@@ -998,7 +1119,6 @@ npm run lint   # Lint + format
     path: '.claude/commands/commit.md',
     tags: [{ label: '/commit', cls: 'tag-cmd' }, { label: 'Slash Command', cls: 'tag-cmd' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#getting-started',
-    kiroEquiv: '.kiro/skills/[skill-name]/SKILL.md',
     what: 'A custom slash command. Type /commit in Claude Code and it runs this prompt automatically. Each .md file in .claude/commands/ becomes a /[filename] command.',
     when: 'Create commands for any task you repeat often: committing, reviewing, debugging, writing tests. Commands keep you consistent and save re-typing.',
     why: 'Slash commands are reusable, version-controlled prompts. They encode your team\'s best practices directly into Claude\'s workflow.',
@@ -1027,7 +1147,6 @@ Review all changes and create a well-formatted git commit.
     path: '.claude/commands/review.md',
     tags: [{ label: '/review', cls: 'tag-cmd' }, { label: 'Slash Command', cls: 'tag-cmd' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#getting-started',
-    kiroEquiv: '.kiro/skills/[skill-name]/SKILL.md',
     what: 'A /review slash command that instructs Claude to review code for bugs, security issues, and quality problems. Pass a file path as argument: /review src/auth.ts',
     when: 'Before merging a PR, after writing new code, when you want a second set of eyes on a critical path.',
     why: 'Encodes exactly what your team cares about in a code review — consistent, repeatable, no "looks good to me" rubber-stamps.',
@@ -1060,7 +1179,6 @@ Be direct. Skip praise. Flag only real problems.`
     path: '.claude/commands/debug.md',
     tags: [{ label: '/debug', cls: 'tag-cmd' }, { label: 'Slash Command', cls: 'tag-cmd' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#getting-started',
-    kiroEquiv: '.kiro/skills/[skill-name]/SKILL.md',
     what: 'A /debug slash command that guides Claude through systematic bug diagnosis — reproduce, locate, hypothesize, verify, fix, confirm, clean up.',
     when: 'When you have an error you can\'t quickly figure out. Describe the bug as $ARGUMENTS: /debug "TypeError: Cannot read properties of undefined at auth.ts:42"',
     why: 'Prevents Claude from guessing. Forces systematic diagnosis before applying fixes — no cargo-cult debugging.',
@@ -1092,7 +1210,6 @@ Do not guess. Do not fix without understanding the cause first.`
     path: '.claude/commands/test.md',
     tags: [{ label: '/test', cls: 'tag-cmd' }, { label: 'Slash Command', cls: 'tag-cmd' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#getting-started',
-    kiroEquiv: '.kiro/skills/[skill-name]/SKILL.md',
     what: 'A /test slash command that instructs Claude to write thorough tests for a given file or feature — matching your project\'s existing test patterns.',
     when: 'After implementing a feature, before marking a task done, or when coverage is missing on critical paths.',
     why: 'Standardizes how tests are written across your codebase. Claude will match your existing patterns, coverage rules, and mock conventions.',
@@ -1127,13 +1244,12 @@ Rules:
     path: '.claude/commands/spec.md',
     tags: [{ label: '/spec', cls: 'tag-cmd' }, { label: 'Slash Command', cls: 'tag-cmd' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#pass-arguments-to-skills',
-    kiroEquiv: '.kiro/specs/ (requirements + design + tasks)',
     what: 'A /spec command that generates a 3-file feature spec before any code is written: requirements.md, design.md, and tasks.md.',
     when: 'Before starting any non-trivial feature. Forces upfront thinking about what, why, and how — preventing mid-build pivots.',
-    why: 'Kiro has built-in spec management. Claude doesn\'t — but this command gives you the same workflow. Plan first, build second.',
+    why: 'Good software starts with a clear plan. This command enforces a spec-first workflow: define what and why before touching any code. Plan first, build second.',
     insights: [
       { icon: '📐', title: 'Spec Before Code', text: 'The command ends with "Do not start building until the spec is reviewed." This creates a natural review checkpoint.' },
-      { icon: '📁', title: 'Three Files', text: 'requirements.md (what+why), design.md (how), tasks.md (ordered steps). This mirrors Kiro\'s native spec workflow exactly.' },
+      { icon: '📁', title: 'Three Files', text: 'requirements.md (what+why), design.md (how), tasks.md (ordered steps). Three files, one clear plan before any code is written.' },
       { icon: '✅', title: 'Task Granularity', text: 'Each task in tasks.md should be small enough to complete in one Claude session with a clear done state.' },
       { icon: '🗂️', title: 'Stored in specs/', text: 'Specs live in specs/[feature-name]/ and get committed to git. They become permanent documentation of why decisions were made.' }
     ],
@@ -1167,12 +1283,11 @@ Do not start building until the spec is reviewed and approved.`
   'specs-requirements': {
     name: 'requirements.md',
     path: 'specs/example-feature/requirements.md',
-    tags: [{ label: 'Spec', cls: 'tag-spec' }, { label: 'What & Why', cls: 'tag-spec' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#configure-skills',
-    kiroEquiv: '.kiro/specs/[feature]/requirements.md',
-    what: 'Documents what a feature should do and why — written before any code. Contains user stories, acceptance criteria, and explicit non-goals.',
+    tags: [{ label: 'Convention', cls: 'tag-spec' }, { label: 'What & Why', cls: 'tag-spec' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory',
+    what: 'A community convention (not a built-in Claude Code feature) for documenting what a feature should do and why — written before any code. Contains user stories, acceptance criteria, and explicit non-goals.',
     when: 'Before starting any non-trivial feature. Especially useful in agent/vibe-coding sessions where scope creep is common.',
-    why: 'Forces clarity on requirements before Claude starts building. Prevents "I built the wrong thing" situations.',
+    why: 'Claude Code has no built-in spec system, but this pattern fills that gap. Forces clarity on requirements before Claude starts building. Prevents "I built the wrong thing" situations.',
     insights: [
       { icon: '👤', title: 'User Stories', text: '"As a [role], I want [goal] so that [reason]" format ensures every requirement is grounded in a real user need.' },
       { icon: '✅', title: 'Testable Criteria', text: 'Acceptance criteria must be specific and testable. "Works correctly" is bad. "Returns 404 when user does not exist" is good.' },
@@ -1202,10 +1317,9 @@ Do not start building until the spec is reviewed and approved.`
   'specs-design': {
     name: 'design.md',
     path: 'specs/example-feature/design.md',
-    tags: [{ label: 'Spec', cls: 'tag-spec' }, { label: 'How', cls: 'tag-spec' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#configure-skills',
-    kiroEquiv: '.kiro/specs/[feature]/design.md',
-    what: 'The technical design for a feature — data model changes, API contracts, component structure, and key architectural decisions.',
+    tags: [{ label: 'Convention', cls: 'tag-spec' }, { label: 'How', cls: 'tag-spec' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory',
+    what: 'A community convention (not a built-in Claude Code feature) for documenting technical design — data model changes, API contracts, component structure, and key architectural decisions.',
     when: 'After requirements are approved, before tasks are written. Let Claude help fill this in — it\'s good at generating designs from requirements.',
     why: 'Makes architectural decisions explicit and reviewable before code is written. Cheaper to change a doc than refactor built code.',
     insights: [
@@ -1248,10 +1362,9 @@ src/
   'specs-tasks': {
     name: 'tasks.md',
     path: 'specs/example-feature/tasks.md',
-    tags: [{ label: 'Spec', cls: 'tag-spec' }, { label: 'Build Plan', cls: 'tag-spec' }],
-    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#configure-skills',
-    kiroEquiv: '.kiro/specs/[feature]/tasks.md',
-    what: 'A step-by-step ordered build plan. Each checkbox is one Claude session\'s worth of work, with a clear done state.',
+    tags: [{ label: 'Convention', cls: 'tag-spec' }, { label: 'Build Plan', cls: 'tag-spec' }],
+    docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory',
+    what: 'A community convention (not a built-in Claude Code feature) for a step-by-step ordered build plan. Each checkbox is one Claude session\'s worth of work, with a clear done state.',
     when: 'After design is approved. Share this with Claude at the start of each coding session: "Work through tasks.md, one task at a time."',
     why: 'Prevents Claude from trying to build everything at once and losing track. One task = one focused session = one clean commit.',
     insights: [
@@ -1283,10 +1396,9 @@ src/
 
   'skill-md': {
     name: 'SKILL.md',
-    path: 'skills/pr-review/SKILL.md',
+    path: '.claude/skills/pr-review/SKILL.md',
     tags: [{ label: 'Skill', cls: 'tag-cmd' }, { label: 'Multi-file', cls: 'tag-hook' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#frontmatter-reference',
-    kiroEquiv: '.kiro/skills/[name]/SKILL.md',
     what: 'The instruction file for a complex, multi-file skill. Like a command, but with a folder of supporting scripts and reference docs Claude can use during execution.',
     when: 'When a task is too complex for a single command file — it needs to run scripts, consult domain knowledge, or follow a multi-step workflow with real tooling.',
     why: 'Commands are prompts. Skills are workflows. A skill bundles the instructions + the tools (scripts) + the knowledge (references) needed to do a job properly.',
@@ -1311,11 +1423,11 @@ Review the PR or changed files for production readiness.
    - Identify what problem this solves
 
 2. **Run automated checks**
-   - Execute \`skills/pr-review/scripts/quality-check.sh\`
+   - Execute \`.claude/skills/pr-review/scripts/quality-check.sh\`
    - Note any lint, test, or type errors
 
 3. **Review against team patterns**
-   - Load \`skills/pr-review/references/review-patterns.md\`
+   - Load \`.claude/skills/pr-review/references/review-patterns.md\`
    - Work through each checklist category
 
 4. **Write the review**
@@ -1329,10 +1441,9 @@ Review the PR or changed files for production readiness.
 
   'skill-script': {
     name: 'quality-check.sh',
-    path: 'skills/pr-review/scripts/quality-check.sh',
+    path: '.claude/skills/pr-review/scripts/quality-check.sh',
     tags: [{ label: 'Skill Script', cls: 'tag-hook' }, { label: 'Executable', cls: 'tag-hook' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#types-of-skill-content',
-    kiroEquiv: '.kiro/skills/[name]/scripts/*.sh',
     what: 'A shell script that Claude runs as part of the skill. Automates mechanical checks (lint, tests, types) so Claude\'s review can focus on logic and judgment.',
     when: 'Any time your skill needs to run real commands and use the output. Scripts turn Claude from a reader into an executor.',
     why: 'Without a script, Claude has to ask you to run things and paste results. With a script, it runs it and gets structured output immediately.',
@@ -1371,10 +1482,9 @@ echo "✅ $PASS passed   ⚠️  $FAIL failed"
 
   'skill-ref': {
     name: 'review-patterns.md',
-    path: 'skills/pr-review/references/review-patterns.md',
+    path: '.claude/skills/pr-review/references/review-patterns.md',
     tags: [{ label: 'Skill Reference', cls: 'tag-spec' }, { label: 'Domain Knowledge', cls: 'tag-always' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/slash-commands#types-of-skill-content',
-    kiroEquiv: '.kiro/skills/[name]/references/*.md',
     what: 'A reference doc Claude loads as domain knowledge during the skill. Contains your team\'s specific standards, checklists, and conventions — not generic advice.',
     when: 'Any time your skill needs to apply project-specific standards. Put your actual rules here, not in the SKILL.md prompt.',
     why: 'Update this file = update Claude\'s standards for the whole team. No prompt editing. No re-explaining. Just edit the checklist.',
@@ -1426,7 +1536,6 @@ echo "✅ $PASS passed   ⚠️  $FAIL failed"
     path: '~/.claude/projects/[project]/memory/MEMORY.md',
     tags: [{ label: 'Auto Memory', cls: 'tag-hook' }, { label: 'Persists Sessions', cls: 'tag-always' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory#storage-location',
-    kiroEquiv: 'No direct Kiro equivalent — Claude-specific feature',
     what: 'Claude\'s persistent memory file. Claude automatically reads and updates this across sessions to remember patterns, decisions, and lessons learned on your project.',
     when: 'Claude manages this automatically when auto-memory is enabled. You can also manually add entries: "Remember that we always use bun, not npm."',
     why: 'Eliminates the need to re-explain context every session. Claude accumulates project knowledge over time like a team member would.',
@@ -1467,7 +1576,6 @@ echo "✅ $PASS passed   ⚠️  $FAIL failed"
     path: '.claude/settings.local.json',
     tags: [{ label: 'Personal', cls: 'tag-hook' }, { label: 'Not Committed', cls: 'tag-spec' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/settings#available-scopes',
-    kiroEquiv: 'No direct Kiro equivalent',
     what: 'Your personal, uncommitted override for settings.json. Claude Code automatically gitignores this file when created. Use it for local experiments, personal env vars, and dev-only settings that should never be shared with the team.',
     when: 'When you want to override a team setting just for yourself — e.g., tuning auto-compact threshold, enabling a debug hook locally, or using a personal API key for an MCP server.',
     why: 'Cleanly separates personal config from team config. settings.json is committed and shared; settings.local.json is yours alone. No more "don\'t commit this" comments.',
@@ -1495,7 +1603,6 @@ echo "✅ $PASS passed   ⚠️  $FAIL failed"
     path: '.mcp.json',
     tags: [{ label: 'MCP', cls: 'tag-mcp' }, { label: 'Project Root', cls: 'tag-spec' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/mcp#project-scope',
-    kiroEquiv: '.kiro/settings/mcp.json',
     what: 'The official project-scope MCP server configuration file. Lives at your project root and is checked into version control, letting your whole team share the same MCP server setup without repeating config in settings.json.',
     when: 'When your project uses MCP servers that all team members need — GitHub for PRs, PostgreSQL for direct queries, Playwright for browser automation. Commit it so everyone gets the same tools.',
     why: 'Separates team MCP config from personal settings. Supports ${ENV_VAR} expansion so secrets stay out of the file. Claude prompts for approval before using project-scoped servers for security.',
@@ -1530,7 +1637,6 @@ echo "✅ $PASS passed   ⚠️  $FAIL failed"
     path: '.claude/rules/frontend.md',
     tags: [{ label: 'Rule', cls: 'tag-always' }, { label: 'Glob Scoped', cls: 'tag-hook' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory#organize-rules-with-clauderules',
-    kiroEquiv: '.kiro/steering/*.md (conditional)',
     what: 'A scoped rule file that Claude loads ONLY when working with frontend files matching src/**/*.tsx. Uses a paths: frontmatter key (not glob:). Claude never loads this when editing backend or test files — zero token waste.',
     when: 'When your frontend has specific conventions: Tailwind only, functional components, aria-labels, etc. Split CLAUDE.md into rules/ when it grows beyond ~100 lines.',
     why: 'Token efficiency. Editing Button.tsx? Claude only sees frontend rules. Backend and testing rules stay out of context. Each file stays small and targeted.',
@@ -1561,7 +1667,6 @@ paths:
     path: '.claude/rules/backend.md',
     tags: [{ label: 'Rule', cls: 'tag-always' }, { label: 'Glob Scoped', cls: 'tag-hook' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory#path-specific-rules',
-    kiroEquiv: '.kiro/steering/*.md (conditional)',
     what: 'A scoped rule file that loads only when Claude touches backend API files (api/**/*.ts). Contains backend-specific conventions: Zod validation, async patterns, error logging, auth enforcement.',
     when: 'When your backend has different rules from your frontend — which it almost always does. SQL patterns, error handling, auth middleware belong here, not mixed into CLAUDE.md.',
     why: 'Your backend uses Zod + async/await + logger.error(). Your frontend uses React + Tailwind. These conventions should never mix. Scoped rules keep each layer\'s context clean.',
@@ -1593,7 +1698,6 @@ paths:
     path: '.claude/rules/testing.md',
     tags: [{ label: 'Rule', cls: 'tag-always' }, { label: 'Glob Scoped', cls: 'tag-hook' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory#path-specific-rules',
-    kiroEquiv: '.kiro/steering/*.md (conditional)',
     what: 'A scoped rule file loaded only when Claude works with test files (**/*.test.ts, **/*.spec.ts). Enforces testing conventions: describe/it structure, mock patterns, arrange-act-assert, one-assertion-per-test.',
     when: 'When you have specific testing standards. Prevents Claude from writing tests in the wrong style, using the wrong framework, or calling real APIs in tests.',
     why: 'Test files have completely different conventions from production code. A separate rule file prevents cross-contamination — your frontend rules don\'t bleed into test structure.',
@@ -1626,7 +1730,6 @@ paths:
     path: '.claude/agents/code-reviewer.md',
     tags: [{ label: 'Subagent', cls: 'tag-mcp' }, { label: 'Isolated', cls: 'tag-hook' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/sub-agents#write-subagent-files',
-    kiroEquiv: 'No direct Kiro equivalent',
     what: 'A subagent definition file. Claude spawns this as an isolated worker with its own tools, model, and instructions. Agents run with a separate context window — they don\'t share or pollute the main session.',
     when: 'For specialized tasks that benefit from isolation and parallelism: code review, security audits, documentation generation. The agent focuses deeply while the main session continues.',
     why: 'Subagents let Claude run specialized workers in parallel. A code-reviewer agent can audit your PR while the main Claude continues building the next feature — no context pollution.',
@@ -1663,7 +1766,6 @@ Skip praise. Only actionable findings. Group by file, ordered by severity.`
     path: 'plugins/my-plugin/.claude-plugin/plugin.json',
     tags: [{ label: 'Plugin', cls: 'tag-mcp' }, { label: 'Distributable', cls: 'tag-spec' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/plugins#create-the-plugin-manifest',
-    kiroEquiv: 'No direct Kiro equivalent',
     what: 'The manifest for a Claude Code plugin — a bundled, shareable package of skills, agents, hooks, and MCP servers. Install plugins from GitHub, npm, or git URLs. The official way to share Claude Code extensions.',
     when: 'When you want to share your skills/agents across projects or with the community. Instead of copying skeleton files everywhere, package them as a plugin and install with one command.',
     why: 'Plugins are the distribution layer for Claude Code. Instead of managing file copies across projects, a plugin is versioned, installable, and updatable — like an npm package for Claude extensions.',
@@ -1678,7 +1780,7 @@ Skip praise. Only actionable findings. Group by file, ordered by severity.`
   "version": "1.0.0",
   "description": "A curated set of skills and agents for [your use case]",
   "skills": [
-    "skills/pr-review"
+    ".claude/skills/pr-review"
   ],
   "agents": [
     "agents/code-reviewer.md"
@@ -1691,7 +1793,6 @@ Skip praise. Only actionable findings. Group by file, ordered by severity.`
     path: '~/.claude/CLAUDE.md',
     tags: [{ label: 'Global', cls: 'tag-hook' }, { label: 'Always Loaded', cls: 'tag-always' }],
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code/memory#choose-where-to-put-claude-md-files',
-    kiroEquiv: 'No direct Kiro equivalent',
     what: 'A personal global CLAUDE.md at ~/.claude/CLAUDE.md. Loaded in EVERY project, everywhere — your personal Claude defaults and preferences.',
     when: 'Set it once. Put things that apply to all your projects: communication preferences, global tools you always use, personal coding standards.',
     why: 'Stops you from repeating "be concise" or "use bun" in every project\'s CLAUDE.md. Your global preferences are always active.',
@@ -1765,6 +1866,19 @@ const TREE = [
               { id: 'agent-md', label: 'code-reviewer.md', icon: '📄', badge: 'AGENT', badgeCls: 'badge-mcp' },
             ]
           },
+          {
+            id: 'skills-dir', label: 'skills/', icon: '🎯', type: 'folder', open: true,
+            children: [
+              {
+                id: 'pr-review-dir', label: 'pr-review/', icon: '📁', type: 'folder', open: true,
+                children: [
+                  { id: 'skill-md',     label: 'SKILL.md',             icon: '📄', badge: 'SKILL', badgeCls: 'badge-cmd' },
+                  { id: 'skill-script', label: 'scripts/quality-check.sh', icon: '📄', badge: 'RUN', badgeCls: 'badge-hook' },
+                  { id: 'skill-ref',    label: 'references/review-patterns.md', icon: '📄', badge: 'REF', badgeCls: 'badge-always' },
+                ]
+              }
+            ]
+          },
           { id: 'memory-md', label: 'memory/MEMORY.md', icon: '🧠', badge: 'AUTO', badgeCls: 'badge-always' },
         ]
       },
@@ -1774,22 +1888,9 @@ const TREE = [
           {
             id: 'feature-dir', label: 'example-feature/', icon: '📁', type: 'folder', open: true,
             children: [
-              { id: 'specs-requirements', label: 'requirements.md', icon: '📄' },
-              { id: 'specs-design',       label: 'design.md',       icon: '📄' },
-              { id: 'specs-tasks',        label: 'tasks.md',        icon: '📄' },
-            ]
-          }
-        ]
-      },
-      {
-        id: 'skills-dir', label: 'skills/', icon: '🎯', type: 'folder', open: true,
-        children: [
-          {
-            id: 'pr-review-dir', label: 'pr-review/', icon: '📁', type: 'folder', open: true,
-            children: [
-              { id: 'skill-md',     label: 'SKILL.md',             icon: '📄', badge: 'SKILL', badgeCls: 'badge-cmd' },
-              { id: 'skill-script', label: 'scripts/quality-check.sh', icon: '📄', badge: 'RUN', badgeCls: 'badge-hook' },
-              { id: 'skill-ref',    label: 'references/review-patterns.md', icon: '📄', badge: 'REF', badgeCls: 'badge-always' },
+              { id: 'specs-requirements', label: 'requirements.md', icon: '📄', badge: 'CONVENTION', badgeCls: 'badge-convention' },
+              { id: 'specs-design',       label: 'design.md',       icon: '📄', badge: 'CONVENTION', badgeCls: 'badge-convention' },
+              { id: 'specs-tasks',        label: 'tasks.md',        icon: '📄', badge: 'CONVENTION', badgeCls: 'badge-convention' },
             ]
           }
         ]
@@ -1907,10 +2008,6 @@ function showTab(tab) {
         <div class="explain-card">
           <h4>💡 Why?</h4>
           <p>${data.why}</p>
-        </div>
-        <div class="explain-card">
-          <h4>🔄 Kiro equivalent</h4>
-          <p>In Kiro, this maps to: <code style="background:var(--bg3);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:12px">${data.kiroEquiv}</code></p>
         </div>
       </div>
       <div class="example-block">
@@ -2338,7 +2435,7 @@ Skip praise. Only actionable findings. Group by file, ordered by severity.
   "version": "1.0.0",
   "description": "A curated set of skills and agents for [your use case]",
   "skills": [
-    "skills/pr-review"
+    ".claude/skills/pr-review"
   ],
   "agents": [
     "agents/code-reviewer.md"
@@ -2359,9 +2456,9 @@ Skip praise. Only actionable findings. Group by file, ordered by severity.
     });
 
     // Skills
-    zip.file('skills/pr-review/SKILL.md', `---\ndescription: Comprehensive PR review — checks quality, security, tests, and conventions\n---\n\n# PR Review Skill\n\nReview the PR or changed files for production readiness.\n\n## Steps\n\n1. **Understand the change**\n   - Run \`git diff main...HEAD --stat\`\n   - Identify what problem this solves\n\n2. **Run automated checks**\n   - Execute \`skills/pr-review/scripts/quality-check.sh\`\n   - Note any lint, test, or type errors\n\n3. **Review against team patterns**\n   - Load \`skills/pr-review/references/review-patterns.md\`\n   - Work through each checklist category\n\n4. **Write the review**\n   - Format: \`file:line → [🔴 blocker | 🟡 warning | 🟢 suggestion] → issue → fix\`\n   - Skip praise — only actionable feedback\n\n5. **Summary**\n   - ✅ Ready / 🟡 Minor changes / 🔴 Needs rework\n   - Nothing merges with a 🔴\n`);
-    zip.file('skills/pr-review/scripts/quality-check.sh', `#!/bin/bash\n# quality-check.sh — Automated checks before PR review\nset -uo pipefail\n\nPASS=0; FAIL=0\n\ncheck() {\n  local label="$1"; shift\n  echo -n "→ $label... "\n  if "$@" &>/dev/null; then\n    echo "✅"; ((PASS++)) || true\n  else\n    echo "⚠️  issues found"\n    "$@" 2>&1 | head -20\n    ((FAIL++)) || true\n  fi\n}\n\necho "🔍 Running quality checks..."\ncheck "Lint"       npm run lint\ncheck "Tests"      npm test\ncheck "Type check" npx tsc --noEmit\n\necho "✅ $PASS passed   ⚠️  $FAIL failed"\n[ "$FAIL" -gt 0 ] && exit 1 || exit 0\n`);
-    zip.file('skills/pr-review/references/review-patterns.md', `# Review Patterns — Team Standards\n\n> Claude loads this during PR review to apply team-specific standards.\n\n## Security\n- [ ] No secrets or API keys in code\n- [ ] All user input validated (Zod, Joi, etc.)\n- [ ] Auth check on every protected endpoint\n- [ ] SQL uses parameterized queries only\n\n## Performance\n- [ ] No N+1 queries\n- [ ] No blocking calls in request handlers\n- [ ] Unbounded queries have limits/pagination\n\n## Correctness\n- [ ] Error paths handled explicitly\n- [ ] Edge cases covered: null, empty, zero\n\n## Code Quality\n- [ ] Functions do one thing\n- [ ] No magic numbers — use named constants\n- [ ] No dead code\n\n## Tests\n- [ ] New behaviour has test coverage\n- [ ] Tests cover happy path + at least one error case\n- [ ] No tests deleted to make the PR pass\n\n## Our Conventions\n- [ ] File naming follows existing patterns\n- [ ] No console.log in production paths\n- [ ] API responses match existing shape\n`);
+    zip.file('.claude/skills/pr-review/SKILL.md', `---\ndescription: Comprehensive PR review — checks quality, security, tests, and conventions\n---\n\n# PR Review Skill\n\nReview the PR or changed files for production readiness.\n\n## Steps\n\n1. **Understand the change**\n   - Run \`git diff main...HEAD --stat\`\n   - Identify what problem this solves\n\n2. **Run automated checks**\n   - Execute \`.claude/skills/pr-review/scripts/quality-check.sh\`\n   - Note any lint, test, or type errors\n\n3. **Review against team patterns**\n   - Load \`.claude/skills/pr-review/references/review-patterns.md\`\n   - Work through each checklist category\n\n4. **Write the review**\n   - Format: \`file:line → [🔴 blocker | 🟡 warning | 🟢 suggestion] → issue → fix\`\n   - Skip praise — only actionable feedback\n\n5. **Summary**\n   - ✅ Ready / 🟡 Minor changes / 🔴 Needs rework\n   - Nothing merges with a 🔴\n`);
+    zip.file('.claude/skills/pr-review/scripts/quality-check.sh', `#!/bin/bash\n# quality-check.sh — Automated checks before PR review\nset -uo pipefail\n\nPASS=0; FAIL=0\n\ncheck() {\n  local label="$1"; shift\n  echo -n "→ $label... "\n  if "$@" &>/dev/null; then\n    echo "✅"; ((PASS++)) || true\n  else\n    echo "⚠️  issues found"\n    "$@" 2>&1 | head -20\n    ((FAIL++)) || true\n  fi\n}\n\necho "🔍 Running quality checks..."\ncheck "Lint"       npm run lint\ncheck "Tests"      npm test\ncheck "Type check" npx tsc --noEmit\n\necho "✅ $PASS passed   ⚠️  $FAIL failed"\n[ "$FAIL" -gt 0 ] && exit 1 || exit 0\n`);
+    zip.file('.claude/skills/pr-review/references/review-patterns.md', `# Review Patterns — Team Standards\n\n> Claude loads this during PR review to apply team-specific standards.\n\n## Security\n- [ ] No secrets or API keys in code\n- [ ] All user input validated (Zod, Joi, etc.)\n- [ ] Auth check on every protected endpoint\n- [ ] SQL uses parameterized queries only\n\n## Performance\n- [ ] No N+1 queries\n- [ ] No blocking calls in request handlers\n- [ ] Unbounded queries have limits/pagination\n\n## Correctness\n- [ ] Error paths handled explicitly\n- [ ] Edge cases covered: null, empty, zero\n\n## Code Quality\n- [ ] Functions do one thing\n- [ ] No magic numbers — use named constants\n- [ ] No dead code\n\n## Tests\n- [ ] New behaviour has test coverage\n- [ ] Tests cover happy path + at least one error case\n- [ ] No tests deleted to make the PR pass\n\n## Our Conventions\n- [ ] File naming follows existing patterns\n- [ ] No console.log in production paths\n- [ ] API responses match existing shape\n`);
 
     // Specs example
     zip.file('specs/example-feature/requirements.md', `# Feature: [Feature Name] — Requirements\n\n## User Stories\n- As a [role], I want to [action] so that [outcome].\n\n## Acceptance Criteria\n- [ ] [Specific, testable condition]\n- [ ] Error states are handled gracefully\n\n## Out of Scope\n- [Explicitly NOT building this]\n`);
@@ -2381,6 +2478,292 @@ Skip praise. Only actionable findings. Group by file, ordered by severity.
     btn.disabled = false;
   }
 }
+
+// ── Quick Reference Data ───────────────────────────────────────────────────
+const QUICK_REF = [
+  {
+    id: 'keyboard', icon: '⌨️', title: 'Keyboard Shortcuts', color: '#3b82f6', colorBg: 'rgba(59,130,246,0.15)',
+    items: [
+      { group: 'General', key: 'Ctrl C', desc: 'Cancel input / generation' },
+      { group: 'General', key: 'Ctrl D', desc: 'Exit session' },
+      { group: 'General', key: 'Ctrl L', desc: 'Clear screen' },
+      { group: 'General', key: 'Ctrl O', desc: 'Toggle verbose / see thinking' },
+      { group: 'General', key: 'Ctrl R', desc: 'Reverse search history' },
+      { group: 'General', key: 'Ctrl G', desc: 'Open prompt in editor' },
+      { group: 'General', key: 'Ctrl B', desc: 'Background running task' },
+      { group: 'General', key: 'Ctrl T', desc: 'Toggle task list' },
+      { group: 'General', key: 'Ctrl V', desc: 'Paste image' },
+      { group: 'General', key: 'Ctrl X  Ctrl K', desc: 'Kill background agents (×2 confirm)' },
+      { group: 'General', key: 'Esc Esc', desc: 'Rewind / undo last message' },
+      { group: 'Modes', key: '⇧ Tab', desc: 'Cycle permission modes' },
+      { group: 'Modes', key: 'Option/Alt P', desc: 'Switch model' },
+      { group: 'Modes', key: 'Option/Alt T', desc: 'Toggle thinking' },
+      { group: 'Input', key: '\\ + Enter', desc: 'Newline (quick)' },
+      { group: 'Input', key: 'Ctrl J', desc: 'Newline (control seq)' },
+      { group: 'Prefixes', key: '/', desc: 'Slash command' },
+      { group: 'Prefixes', key: '!', desc: 'Direct bash' },
+      { group: 'Prefixes', key: '@', desc: 'File mention + autocomplete' },
+    ]
+  },
+  {
+    id: 'slash', icon: '/', title: 'Slash Commands', color: '#8b5cf6', colorBg: 'rgba(139,92,246,0.15)',
+    items: [
+      { group: 'Session', key: '/clear', desc: 'Clear conversation' },
+      { group: 'Session', key: '/compact [focus]', desc: 'Compact context' },
+      { group: 'Session', key: '/resume', desc: 'Resume / switch session' },
+      { group: 'Session', key: '/rename [name]', desc: 'Name current session' },
+      { group: 'Session', key: '/branch [name]', desc: 'Branch conversation (/fork alias)' },
+      { group: 'Session', key: '/cost', desc: 'Token usage stats' },
+      { group: 'Session', key: '/context', desc: 'Visualize context (grid)' },
+      { group: 'Session', key: '/diff', desc: 'Interactive diff viewer' },
+      { group: 'Config', key: '/config', desc: 'Open settings' },
+      { group: 'Config', key: '/model [model]', desc: 'Switch model' },
+      { group: 'Config', key: '/fast [on|off]', desc: 'Toggle fast mode' },
+      { group: 'Config', key: '/vim', desc: 'Toggle vim mode' },
+      { group: 'Config', key: '/theme', desc: 'Change color theme' },
+      { group: 'Config', key: '/permissions', desc: 'View/update permissions' },
+      { group: 'Config', key: '/effort [level]', desc: 'Set effort: low/med/high/max' },
+      { group: 'Config', key: '/keybindings', desc: 'Customize keyboard shortcuts' },
+      { group: 'Config', key: '/terminal-setup', desc: 'Configure terminal keybindings' },
+      { group: 'Tools', key: '/init', desc: 'Create CLAUDE.md' },
+      { group: 'Tools', key: '/memory', desc: 'Edit CLAUDE.md files' },
+      { group: 'Tools', key: '/mcp', desc: 'Manage MCP servers' },
+      { group: 'Tools', key: '/hooks', desc: 'Manage hooks' },
+      { group: 'Tools', key: '/skills', desc: 'List available skills' },
+      { group: 'Tools', key: '/agents', desc: 'Manage agents' },
+      { group: 'Tools', key: '/chrome', desc: 'Chrome integration' },
+      { group: 'Tools', key: '/reload-plugins', desc: 'Hot-reload plugins' },
+      { group: 'Tools', key: '/add-dir <path>', desc: 'Add working directory' },
+      { group: 'Special', key: '/btw <question>', desc: 'Side question — no context cost' },
+      { group: 'Special', key: '/plan [desc]', desc: 'Plan mode + auto-start' },
+      { group: 'Special', key: '/loop [interval]', desc: 'Schedule recurring task' },
+      { group: 'Special', key: '/voice', desc: 'Push-to-talk voice (20 languages)' },
+      { group: 'Special', key: '/pr-comments [PR]', desc: 'Fetch GitHub PR comments' },
+      { group: 'Special', key: '/stats', desc: 'Usage streaks & prefs' },
+      { group: 'Special', key: '/insights', desc: 'Analyze sessions report' },
+      { group: 'Special', key: '/desktop', desc: 'Continue in Desktop app' },
+      { group: 'Special', key: '/remote-control', desc: 'Bridge to claude.ai/code (/rc)' },
+      { group: 'Special', key: '/schedule', desc: 'Cloud scheduled tasks' },
+      { group: 'Special', key: '/security-review', desc: 'Security analysis of changes' },
+      { group: 'Special', key: '/help', desc: 'Show help + commands' },
+      { group: 'Special', key: '/feedback', desc: 'Submit feedback (alias: /bug)' },
+      { group: 'Special', key: '/release-notes', desc: 'View full changelog' },
+    ]
+  },
+  {
+    id: 'workflows', icon: '⚡', title: 'Workflows & Tips', color: '#d97706', colorBg: 'rgba(217,119,6,0.15)',
+    items: [
+      { group: 'Plan Mode', key: '⇧ Tab ×2', desc: 'Normal → Auto-Accept → Plan' },
+      { group: 'Plan Mode', key: '--permission-mode plan', desc: 'Start session in plan mode' },
+      { group: 'Thinking', key: 'Option/Alt T', desc: 'Toggle thinking on/off' },
+      { group: 'Thinking', key: '"ultrathink"', desc: 'Max effort for the turn' },
+      { group: 'Thinking', key: '/effort low|med|high', desc: 'Override effort level' },
+      { group: 'Git Worktrees', key: '--worktree name', desc: 'Isolated branch per feature' },
+      { group: 'Git Worktrees', key: 'isolation: worktree', desc: 'Agent runs in own worktree' },
+      { group: 'Git Worktrees', key: 'sparsePaths', desc: 'Checkout only needed dirs', isNew: true },
+      { group: 'Git Worktrees', key: '/branch', desc: 'Auto-creates worktrees' },
+      { group: 'Context', key: '/compact [focus]', desc: 'Compress context with focus' },
+      { group: 'Context', key: 'Auto-compact', desc: '~95% capacity trigger' },
+      { group: 'Context', key: 'CLAUDE.md', desc: 'Survives compaction!' },
+      { group: 'Session', key: 'claude -c', desc: 'Continue last conversation' },
+      { group: 'Session', key: 'claude -r "name"', desc: 'Resume session by name' },
+      { group: 'Session', key: '/btw question', desc: 'Side Q — zero context cost' },
+      { group: 'Headless', key: 'claude -p "query"', desc: 'Non-interactive / pipe input' },
+      { group: 'Headless', key: '--output-format json', desc: 'Structured output' },
+      { group: 'Headless', key: '--max-budget-usd $', desc: 'Cost cap per session' },
+      { group: 'Headless', key: 'cat file | claude -p', desc: 'Pipe file as input' },
+      { group: 'Voice', key: '/voice', desc: 'Enable push-to-talk' },
+      { group: 'Voice', key: 'Space (hold)', desc: 'Record, release to send' },
+      { group: 'Voice', key: '20 languages', desc: 'EN, ES, FR, DE, CZ, PL…' },
+    ]
+  },
+  {
+    id: 'skills-agents', icon: '🎯', title: 'Skills & Agents', color: '#16a34a', colorBg: 'rgba(22,163,74,0.15)',
+    items: [
+      { group: 'Built-in Skills', key: '/simplify', desc: 'Code review (3 parallel agents)' },
+      { group: 'Built-in Skills', key: '/batch', desc: 'Large parallel changes (5–30 worktrees)' },
+      { group: 'Built-in Skills', key: '/debug [desc]', desc: 'Troubleshoot from debug log' },
+      { group: 'Built-in Skills', key: '/loop [interval]', desc: 'Recurring scheduled task' },
+      { group: 'Built-in Skills', key: '/claude-api', desc: 'Load API + SDK reference' },
+      { group: 'Skill Locations', key: '.claude/skills/<name>/', desc: 'Project skills' },
+      { group: 'Skill Locations', key: '~/.claude/skills/<name>/', desc: 'Personal skills' },
+      { group: 'Skill Frontmatter', key: 'description:', desc: 'Auto-invocation trigger' },
+      { group: 'Skill Frontmatter', key: 'allowed-tools:', desc: 'Skip permission prompts' },
+      { group: 'Skill Frontmatter', key: 'model:', desc: 'Override model for skill' },
+      { group: 'Skill Frontmatter', key: 'effort:', desc: 'Override effort level', isNew: true },
+      { group: 'Skill Frontmatter', key: 'context: fork', desc: 'Run skill in subagent' },
+      { group: 'Skill Frontmatter', key: '$ARGUMENTS', desc: 'User input placeholder' },
+      { group: 'Skill Frontmatter', key: '${CLAUDE_SKILL_DIR}', desc: "Skill's own directory" },
+      { group: 'Skill Frontmatter', key: "!'cmd'", desc: 'Dynamic context injection' },
+      { group: 'Built-in Agents', key: 'Explore', desc: 'Fast read-only (Haiku)' },
+      { group: 'Built-in Agents', key: 'Plan', desc: 'Research for plan mode' },
+      { group: 'Built-in Agents', key: 'Task', desc: 'Full tools, complex tasks' },
+      { group: 'Built-in Agents', key: 'Bash', desc: 'Terminal separate context' },
+      { group: 'Agent Frontmatter', key: 'permissionMode:', desc: 'default/acceptEdits/plan/dontAsk/bypass' },
+      { group: 'Agent Frontmatter', key: 'isolation: worktree', desc: 'Run in git worktree' },
+      { group: 'Agent Frontmatter', key: 'memory: user|project', desc: 'Persistent memory scope' },
+      { group: 'Agent Frontmatter', key: 'background: true', desc: 'Run as background task' },
+      { group: 'Agent Frontmatter', key: 'maxTurns:', desc: 'Limit agentic turns' },
+    ]
+  },
+  {
+    id: 'mcp', icon: '🔌', title: 'MCP Servers', color: '#0891b2', colorBg: 'rgba(8,145,178,0.15)',
+    items: [
+      { group: 'Transport', key: '--transport http', desc: 'Remote HTTP (recommended)' },
+      { group: 'Transport', key: '--transport stdio', desc: 'Local process' },
+      { group: 'Transport', key: '--transport sse', desc: 'Remote SSE' },
+      { group: 'Scopes', key: '.claude.json', desc: 'Local (per project)' },
+      { group: 'Scopes', key: '.mcp.json', desc: 'Project (shared/VCS)' },
+      { group: 'Scopes', key: '~/.claude.json', desc: 'User (global)' },
+      { group: 'Manage', key: '/mcp', desc: 'Interactive MCP UI' },
+      { group: 'Manage', key: 'claude mcp list', desc: 'List all servers' },
+      { group: 'Manage', key: 'claude mcp serve', desc: 'Use Claude Code as MCP server' },
+      { group: 'Manage', key: 'Elicitation', desc: 'Servers request input mid-task', isNew: true },
+    ]
+  },
+  {
+    id: 'memory', icon: '🧠', title: 'Memory & Files', color: '#b45309', colorBg: 'rgba(180,83,9,0.15)',
+    items: [
+      { group: 'CLAUDE.md', key: './CLAUDE.md', desc: 'Project — team-shared, committed' },
+      { group: 'CLAUDE.md', key: '~/.claude/CLAUDE.md', desc: 'Personal — all projects' },
+      { group: 'CLAUDE.md', key: '/etc/claude-code/', desc: 'Managed — org-wide' },
+      { group: 'Rules & Import', key: '.claude/rules/*.md', desc: 'Project rules' },
+      { group: 'Rules & Import', key: '~/.claude/rules/*.md', desc: 'User rules' },
+      { group: 'Rules & Import', key: 'paths: frontmatter', desc: 'Path-specific rules' },
+      { group: 'Rules & Import', key: '@path/to/file', desc: 'Import file in CLAUDE.md' },
+      { group: 'Auto Memory', key: '~/.claude/projects/<proj>/memory/', desc: 'MEMORY.md + topic files, auto-loaded' },
+    ]
+  },
+  {
+    id: 'config', icon: '⚙️', title: 'Config & ENV', color: '#64748b', colorBg: 'rgba(100,116,139,0.15)',
+    items: [
+      { group: 'Config Files', key: '~/.claude/settings.json', desc: 'User settings' },
+      { group: 'Config Files', key: '.claude/settings.json', desc: 'Project (shared, committed)' },
+      { group: 'Config Files', key: '.claude/settings.local.json', desc: 'Local only, gitignored' },
+      { group: 'Config Files', key: '~/.claude.json', desc: 'OAuth, MCP, state' },
+      { group: 'Config Files', key: '.mcp.json', desc: 'Project MCP servers' },
+      { group: 'Key Settings', key: 'modelOverrides', desc: 'Map model picker → custom IDs' },
+      { group: 'Key Settings', key: 'autoMemoryDirectory', desc: 'Custom memory dir' },
+      { group: 'Key Settings', key: 'worktree.sparsePaths', desc: 'Sparse checkout dirs', isNew: true },
+      { group: 'Env Vars', key: 'ANTHROPIC_API_KEY', desc: 'API authentication key' },
+      { group: 'Env Vars', key: 'ANTHROPIC_MODEL', desc: 'Override default model' },
+      { group: 'Env Vars', key: 'CLAUDE_CODE_EFFORT_LEVEL', desc: 'low / med / high' },
+      { group: 'Env Vars', key: 'MAX_THINKING_TOKENS', desc: 'Override thinking budget' },
+      { group: 'Env Vars', key: 'CLAUDECODE', desc: 'Detect CC shell (=1)' },
+    ]
+  },
+  {
+    id: 'cli', icon: '🖥️', title: 'CLI & Flags', color: '#e11d48', colorBg: 'rgba(225,29,72,0.15)',
+    items: [
+      { group: 'Core', key: 'claude', desc: 'Interactive mode' },
+      { group: 'Core', key: 'claude "q"', desc: 'With prompt' },
+      { group: 'Core', key: 'claude -p "q"', desc: 'Headless / non-interactive' },
+      { group: 'Core', key: 'claude -c', desc: 'Continue last session' },
+      { group: 'Core', key: 'claude -r "n"', desc: 'Resume session by name' },
+      { group: 'Core', key: 'claude update', desc: 'Update Claude Code' },
+      { group: 'Flags', key: '--model', desc: 'Set model' },
+      { group: 'Flags', key: '-w', desc: 'Git worktree' },
+      { group: 'Flags', key: '--name / -n', desc: 'Session name' },
+      { group: 'Flags', key: '--add-dir', desc: 'Add working directory' },
+      { group: 'Flags', key: '--allowedTools', desc: 'Pre-approve tools' },
+      { group: 'Flags', key: '--output-format', desc: 'json / stream-json' },
+      { group: 'Flags', key: '--max-turns', desc: 'Limit agentic turns' },
+      { group: 'Flags', key: '--max-budget-usd', desc: 'Cost cap per run' },
+      { group: 'Flags', key: '--verbose', desc: 'Verbose output' },
+      { group: 'Flags', key: '--bare', desc: 'Minimal headless (no hooks/LSP)', isNew: true },
+      { group: 'Flags', key: '--channels', desc: 'Permission relay & MCP push', isNew: true },
+      { group: 'Flags', key: '--effort', desc: 'low / med / high / max' },
+      { group: 'Flags', key: '--permission-mode', desc: 'plan / default / acceptEdits / bypass' },
+      { group: 'Flags', key: '--dangerously-skip-permissions', desc: '⚠️ Skip all prompts' },
+      { group: 'Flags', key: '--chrome', desc: 'Chrome integration' },
+    ]
+  }
+];
+
+// ── Quick Reference Functions ──────────────────────────────────────────────
+let qrVisible = false;
+
+function renderQuickRef() {
+  const grid = document.getElementById('qr-grid');
+  grid.innerHTML = QUICK_REF.map(section => {
+    let body = ''; let lastGroup = '';
+    section.items.forEach(item => {
+      if (item.group !== lastGroup) {
+        body += `<div class="qr-group">${item.group}</div>`;
+        lastGroup = item.group;
+      }
+      const k = escapeHtml(item.key || '');
+      const d = escapeHtml(item.desc || '');
+      const kLow = (item.key || '').toLowerCase();
+      const dLow = (item.desc || '').toLowerCase();
+      body += `<div class="qr-item" data-key="${kLow}" data-desc="${dLow}">
+        <span class="qr-item-key" style="color:${section.color}">${k}</span>
+        <span class="qr-item-desc">${d}</span>
+        ${item.isNew ? '<span class="qr-new">NEW</span>' : ''}
+        <button class="qr-copy" onclick="copyQrItem(this,'${k.replace(/'/g,"\\'")}')">copy</button>
+      </div>`;
+    });
+    return `<div class="qr-card" id="qr-card-${section.id}">
+      <div class="qr-card-header" style="background:${section.colorBg};color:${section.color}">
+        <span style="font-size:14px">${section.icon}</span><span>${section.title}</span>
+      </div>
+      <div class="qr-card-body">${body}</div>
+    </div>`;
+  }).join('');
+}
+
+function copyQrItem(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓'; btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1200);
+  });
+}
+
+function filterQuickRef(query) {
+  const q = query.trim().toLowerCase();
+  let anyVisible = false;
+  QUICK_REF.forEach(section => {
+    const card = document.getElementById('qr-card-' + section.id);
+    if (!card) return;
+    let cardHasMatch = false;
+    card.querySelectorAll('.qr-item').forEach(item => {
+      const match = !q || item.dataset.key.includes(q) || item.dataset.desc.includes(q);
+      item.classList.toggle('hidden', !match);
+      if (match) cardHasMatch = true;
+    });
+    card.classList.toggle('hidden', !cardHasMatch);
+    if (cardHasMatch) anyVisible = true;
+  });
+  let noRes = document.getElementById('qr-no-results');
+  if (!anyVisible && q) {
+    if (!noRes) {
+      noRes = document.createElement('div');
+      noRes.id = 'qr-no-results'; noRes.className = 'qr-no-results';
+      document.getElementById('qr-grid').appendChild(noRes);
+    }
+    noRes.textContent = `No results for "${query}"`;
+  } else if (noRes) { noRes.remove(); }
+}
+
+function toggleQuickRef() {
+  qrVisible = !qrVisible;
+  document.getElementById('qr-panel').classList.toggle('active', qrVisible);
+  document.getElementById('main-explorer').style.display = qrVisible ? 'none' : '';
+  document.querySelector('.subheader').style.display = qrVisible ? 'none' : '';
+  document.getElementById('qr-btn').classList.toggle('active', qrVisible);
+  if (qrVisible) {
+    if (!document.getElementById('qr-grid').children.length) renderQuickRef();
+    setTimeout(() => document.getElementById('qr-search').focus(), 50);
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === '?' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) {
+    e.preventDefault(); toggleQuickRef();
+  }
+  if (e.key === 'Escape' && qrVisible) toggleQuickRef();
+});
 
 // ── Init ───────────────────────────────────────────────────────────────────
 renderTree(TREE, document.getElementById('tree'));
